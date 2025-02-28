@@ -9,10 +9,16 @@ import { LoadingScreen } from 'src/components/loading-screen';
 // ----------------------------------------------------------------------
 
 const IndexPage = lazy(() => import('src/pages/dashboard/Index'));
-const Product = lazy(() => import('src/pages/dashboard/product'));
 const Category = lazy(() => import('src/pages/dashboard/category'));
 const Order = lazy(() => import('src/pages/dashboard/order'));
 const Payment = lazy(() => import('src/pages/dashboard/payment'));
+
+
+
+const ProductCreatePage = lazy(() => import('src/pages/dashboard/product/new'));
+const ProductListPage = lazy(() => import('src/pages/dashboard/product/list'));
+const ProductEditPage = lazy(() => import('src/pages/dashboard/product/edit'));
+
 
 // ----------------------------------------------------------------------
 
@@ -30,7 +36,15 @@ export const dashboardRoutes = [
     ),
     children: [
       { element: <IndexPage />, index: true },
-      { path: 'product', element: <Product /> },
+      {
+        path: 'product',
+        children: [
+          { element: <ProductListPage />, index: true },
+          { path: 'list', element: <ProductListPage /> },
+          { path: 'new', element: <ProductCreatePage /> },
+          { path: 'edit', element: <ProductEditPage /> },
+        ],
+      },
       { path: 'category', element: <Category /> },
       { path: 'order', element: <Order /> },
       { path: 'payment', element: <Payment /> },

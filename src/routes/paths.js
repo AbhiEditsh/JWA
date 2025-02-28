@@ -17,14 +17,14 @@ export const paths = {
   // DASHBOARD
   dashboard: {
     root: ROOTS.DASHBOARD,
-    product: `${ROOTS.DASHBOARD}/product`,
+    product: {
+      root: `${ROOTS.DASHBOARD}/product`,
+      new: `${ROOTS.DASHBOARD}/product/new`,
+      list: `${ROOTS.DASHBOARD}/product/list`,
+      edit: (id) => `${ROOTS.DASHBOARD}/product/${id}/edit`,
+    },
     category: `${ROOTS.DASHBOARD}/category`,
     order: `${ROOTS.DASHBOARD}/order`,
     payment: `${ROOTS.DASHBOARD}/payment`,
-    // group: {
-    //   root: `${ROOTS.DASHBOARD}/group`,
-    //   five: `${ROOTS.DASHBOARD}/group/five`,
-    //   six: `${ROOTS.DASHBOARD}/group/six`,
-    // },
   },
 };

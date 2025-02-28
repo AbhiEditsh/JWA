@@ -10,7 +10,7 @@ import Typography from '@mui/material/Typography';
 import LoadingButton from '@mui/lab/LoadingButton';
 import InputAdornment from '@mui/material/InputAdornment';
 
-import { useRouter, useSearchParams } from 'src/routes/hooks';
+import { useRouter, useSearchParams, } from 'src/routes/hooks';
 
 import { useBoolean } from 'src/hooks/use-boolean';
 
@@ -19,13 +19,13 @@ import { PATH_AFTER_LOGIN } from 'src/config-global';
 
 import Iconify from 'src/components/iconify';
 import FormProvider, { RHFTextField } from 'src/components/hook-form';
-
+  
 export default function JwtLoginView() {
   const { login } = useAuthContext();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const returnTo = searchParams.get('returnTo');
   const [errorMsg, setErrorMsg] = useState('');
-  const searchParams = useSearchParams();
   const password = useBoolean();
 
   const LoginSchema = Yup.object().shape({
