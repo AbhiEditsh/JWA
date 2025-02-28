@@ -21,7 +21,7 @@ export const paths = {
       root: `${ROOTS.DASHBOARD}/product`,
       new: `${ROOTS.DASHBOARD}/product/new`,
       list: `${ROOTS.DASHBOARD}/product/list`,
-      edit: (id) => `${ROOTS.DASHBOARD}/product/${id}/edit`,
+      edit: `${ROOTS.DASHBOARD}/product/edit`,
     },
     category: `${ROOTS.DASHBOARD}/category`,
     order: `${ROOTS.DASHBOARD}/order`,

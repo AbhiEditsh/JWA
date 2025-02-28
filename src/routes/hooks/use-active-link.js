@@ -11,3 +11,4 @@ export function useActiveLink(path, deep = true) {
 
   return deep ? deepActive : normalActive;
 }
+

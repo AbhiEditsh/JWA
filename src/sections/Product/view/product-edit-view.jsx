@@ -3,9 +3,13 @@ import React from 'react';
 // import PropTypes from 'prop-types';
 
 import Container from '@mui/material/Container';
-import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
+
 import { paths } from 'src/routes/paths';
+
+import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
+
 import ProductNewEditForm from '../product-new-edit-form';
+
 
 export default function ProductEditView() {
 
@@ -21,7 +25,7 @@ export default function ProductEditView() {
         sx={{ mb: { xs: 3, md: 5 } }}
       />
 
-      <ProductNewEditForm  />
+      <ProductNewEditForm/>
     </Container>
   );
 }

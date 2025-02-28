@@ -15,8 +15,8 @@ const Payment = lazy(() => import('src/pages/dashboard/payment'));
 
 
 
-const ProductCreatePage = lazy(() => import('src/pages/dashboard/product/new'));
 const ProductListPage = lazy(() => import('src/pages/dashboard/product/list'));
+const ProductCreatePage = lazy(() => import('src/pages/dashboard/product/new'));
 const ProductEditPage = lazy(() => import('src/pages/dashboard/product/edit'));
 
 
@@ -36,6 +36,9 @@ export const dashboardRoutes = [
     ),
     children: [
       { element: <IndexPage />, index: true },
+      { path: 'category', element: <Category /> },
+      { path: 'order', element: <Order /> },
+      { path: 'payment', element: <Payment /> },
       {
         path: 'product',
         children: [
@@ -45,17 +48,6 @@ export const dashboardRoutes = [
           { path: 'edit', element: <ProductEditPage /> },
         ],
       },
-      { path: 'category', element: <Category /> },
-      { path: 'order', element: <Order /> },
-      { path: 'payment', element: <Payment /> },
-      // {
-      //   path: 'group',
-      //   children: [
-      //     { element: <PageFour />, index: true },
-      //     { path: 'five', element: <PageFive /> },
-      //     { path: 'six', element: <PageSix /> },
-      //   ],
-      // },
     ],
   },
 ];

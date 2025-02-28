@@ -2,16 +2,14 @@ import { useMemo } from 'react';
 
 import { paths } from 'src/routes/paths';
 
+import { useTranslate } from 'src/locales';
+
 import SvgColor from 'src/components/svg-color';
 
 // ----------------------------------------------------------------------
 
 const icon = (name) => (
   <SvgColor src={`/assets/icons/navbar/${name}.svg`} sx={{ width: 1, height: 1 }} />
-  // OR
-  // <Iconify icon="fluent:mail-24-filled" />
-  // https://icon-sets.iconify.design/solar/
-  // https://www.streamlinehq.com/icons
 );
 
 const ICONS = {
@@ -44,52 +42,44 @@ const ICONS = {
 // ----------------------------------------------------------------------
 
 export function useNavData() {
+  const { t } = useTranslate();
+
   const data = useMemo(
     () => [
       // OVERVIEW
       // ----------------------------------------------------------------------
       {
-        // subheader: 'overview v5.7.0',
         items: [
-          { title: 'Dashboard', path: paths.dashboard.root, icon: ICONS.dashboard },
-          { title: 'Product', path: paths.dashboard.product, icon: ICONS.product },
+          { title: t('Dashboard'), path: paths.dashboard.root, icon: ICONS.dashboard },
           {
-            title: 'Category',
+            title: t('Product'),
+            path: paths.dashboard.product.root,
+            icon: ICONS.product,
+            children: [
+              { title: t('list'), path: paths.dashboard.product.list },
+              { title: t('create'), path: paths.dashboard.product.new },
+              { title: t('edit'), path: paths.dashboard.product.edit },
+            ],
+          },
+          {
+            title: t('Category'),
             path: paths.dashboard.category,
             icon: ICONS.ecommerce,
           },
           {
-            title: 'Order',
+            title: t('Order'),
             path: paths.dashboard.order,
             icon: ICONS.order,
           },
           {
-            title: 'Payment',
+            title: t('Payment'),
             path: paths.dashboard.payment,
             icon: ICONS.banking,
           },
         ],
       },
-
-      // // MANAGEMENT
-      // // ----------------------------------------------------------------------
-      // {
-      //   subheader: 'management',
-      //   items: [
-      //     {
-      //       title: 'user',
-      //       path: paths.dashboard.group.root,
-      //       icon: ICONS.user,
-      //       children: [
-      //         { title: 'four', path: paths.dashboard.group.root },
-      //         { title: 'five', path: paths.dashboard.group.five },
-      //         { title: 'six', path: paths.dashboard.group.six },
-      //       ],
-      //     },
-      //   ],
-      // },
     ],
-    []
+    [t]
   );
 
   return data;

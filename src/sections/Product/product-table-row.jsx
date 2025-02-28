@@ -1,66 +1,39 @@
 import PropTypes from 'prop-types';
 
 import {
-  Box,
   Button,
   MenuItem,
   TableRow,
-  Checkbox,
-  Tooltip,
   TableCell,
   IconButton,
 } from '@mui/material';
 
 import { useBoolean } from 'src/hooks/use-boolean';
-import { fDate } from 'src/utils/format-time';
 
 import Iconify from 'src/components/iconify';
-
 import { ConfirmDialog } from 'src/components/custom-dialog';
 import CustomPopover, { usePopover } from 'src/components/custom-popover';
-import DemoNewEditForm from './Demo-new-edit-form';
 
 export default function ProductTableRow({
-  row,
-  index,
-  selected,
   onEditRow,
-  onSelectRow,
   onDeleteRow,
 }) {
-  const { firstName, lastName, email, contact, dob } = row;
 
   const confirm = useBoolean();
   const popover = usePopover();
 
-  const quickEdit = useBoolean();
 
   return (
     <>
-      <TableRow hover selected={selected}>
-        <TableCell padding="checkbox">
-          <Checkbox checked={selected} onClick={onSelectRow} />
-        </TableCell>
+      <TableRow hover>
 
-        <TableCell>
-          <Box>{index + 1}</Box>
-        </TableCell>
-
-        <TableCell>{firstName + lastName}</TableCell>
-
-        <TableCell>{fDate(dob)}</TableCell>
-
-        <TableCell align="center"> {contact} </TableCell>
-
-        <TableCell align="center"> {email} </TableCell>
-
-        <TableCell align="right" sx={{ px: 1, whiteSpace: 'nowrap' ,align: 'center' }}>
+        {/* <TableCell align="right" sx={{ px: 1, whiteSpace: 'nowrap', align: 'center' }}>
           <Tooltip title="Demo" placement="top" arrow>
             <IconButton color={quickEdit.value ? 'inherit' : 'default'} onClick={quickEdit.onTrue}>
-              <Iconify icon="solar:pen-bold" sx={{textAlign: 'center' }}/>
-            </IconButton>
+              <Iconify icon="solar:pen-bold" sx={{ textAlign: 'center' }} />
+            </IconButton>-
           </Tooltip>
-        </TableCell>
+        </TableCell> */}
 
         <TableCell align="right" sx={{ px: 1, whiteSpace: 'nowrap' }}>
           <IconButton color={popover.open ? 'inherit' : 'default'} onClick={popover.onOpen}>
@@ -97,12 +70,6 @@ export default function ProductTableRow({
         </MenuItem>
       </CustomPopover>
 
-      <DemoNewEditForm
-        currentId={row}
-        open={quickEdit.value}
-        onClose={quickEdit.onFalse}
-      />
-
       <ConfirmDialog
         open={confirm.value}
         onClose={confirm.onFalse}
@@ -119,10 +86,6 @@ export default function ProductTableRow({
 }
 
 ProductTableRow.propTypes = {
-  row: PropTypes.object.isRequired,
-  index: PropTypes.number.isRequired,
-  selected: PropTypes.bool.isRequired,
   onEditRow: PropTypes.func.isRequired,
   onDeleteRow: PropTypes.func.isRequired,
-  onSelectRow: PropTypes.func.isRequired,
 };

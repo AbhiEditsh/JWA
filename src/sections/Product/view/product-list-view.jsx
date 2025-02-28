@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 
 import Card from '@mui/material/Card';
 import Table from '@mui/material/Table';
@@ -10,14 +10,13 @@ import IconButton from '@mui/material/IconButton';
 import TableContainer from '@mui/material/TableContainer';
 
 import { paths } from 'src/routes/paths';
-import { useRouter } from 'src/routes/hooks';
+// import { useRouter } from 'src/routes/hooks';
 import { RouterLink } from 'src/routes/components';
 
-import axios from 'axios';
 import { useBoolean } from 'src/hooks/use-boolean';
+
 import Iconify from 'src/components/iconify';
 import Scrollbar from 'src/components/scrollbar';
-import { useSnackbar } from 'src/components/snackbar';
 import { ConfirmDialog } from 'src/components/custom-dialog';
 import { useSettingsContext } from 'src/components/settings';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
@@ -32,11 +31,8 @@ import {
   TablePaginationCustom,
 } from 'src/components/table';
 
-import { useGetInquiry } from 'src/api/inquiry';
-
-import InquiryTableRow from '../inquiry-table-row';
-import InquiryTableToolbar from '../inquiry-table-toolbar';
-// ----------------------------------------------------------------------
+import ProductTableRow from '../product-table-row';
+import ProductTableToolbar from '../product-table-toolbar';
 
 const TABLE_HEAD = [
   { id: 'Sr no', label: 'Sr No' },
@@ -55,38 +51,28 @@ const defaultFilters = {
 
 // ----------------------------------------------------------------------
 
-export default function ProductListView() {
-  const { enqueueSnackbar } = useSnackbar();
-
+function ProductListView() {
   const table = useTable();
 
   const settings = useSettingsContext();
 
-  const router = useRouter();
+  // const router = useRouter();
 
   const confirm = useBoolean();
 
   const [filters, setFilters] = useState(defaultFilters);
-  const { inquiry, inquiryError, mutate } = useGetInquiry();
-
-  useEffect(() => {
-    if (inquiryError) {
-      enqueueSnackbar('Failed to fetch inquiries', { variant: 'error' });
-    }
-  }, [inquiryError, enqueueSnackbar]);
 
   const dataFiltered = applyFilter({
-    inputData: inquiry,
     comparator: getComparator(table.order, table.orderBy),
     filters,
   });
 
   const denseHeight = table.dense ? 56 : 56 + 20;
 
-  const canReset =
-    !!filters.name || filters.status !== 'all' || (!!filters.startDate && !!filters.endDate);
+  // const canReset =
+  //   !!filters.name || filters.status !== 'all' || (!!filters.startDate && !!filters.endDate);
 
-  const notFound = (!dataFiltered.length && canReset) || !dataFiltered.length;
+  // const notFound = (!dataFiltered.length && canReset) || !dataFiltered.length;
 
   const handleFilters = useCallback(
     (name, value) => {
@@ -99,40 +85,13 @@ export default function ProductListView() {
     [table]
   );
 
-  const handleDeleteRows = useCallback(async () => {
-    try {
-      const sortedSelectedIds = [...table.selected].sort();
-      const selectedIds = sortedSelectedIds.map((selectedId) => selectedId);
-      const URL = `${import.meta.env.VITE_AUTH_API}/api/company/inquiry`;
-      const response = await axios.delete(URL, {
-        data: { ids: selectedIds },
-      });
-      if (response.status === 200) {
-        console.log('delete response:', response);
-        enqueueSnackbar(response.data.message, { variant: 'success' });
-        mutate();
-        confirm.onFalse();
-      } else {
-        enqueueSnackbar(response.data.message, { variant: 'error' });
-      }
-    } catch (error) {
-      console.error('Failed to delete inquiries', error);
-      enqueueSnackbar('Failed to delete inquiries', { variant: 'error' });
-    }
-  }, [table.selected, enqueueSnackbar, mutate, confirm]);
-
-  const handleEditRow = useCallback(
-    (id) => {
-      router.push(paths.dashboard.inquiry.edit(id));
-    },
-    [router]
-  );
+  const handleDeleteRows = useCallback(async () => {}, []);
 
   return (
     <>
       <Container maxWidth={settings.themeStretch ? false : 'xl'}>
         <CustomBreadcrumbs
-          heading="Inquiry List"
+          heading="Product List"
           links={[
             { name: 'Dashboard', href: paths.dashboard.root },
             { name: 'Product', href: paths.dashboard.product.list },
@@ -141,11 +100,11 @@ export default function ProductListView() {
           action={
             <Button
               component={RouterLink}
-              href={paths.dashboard.inquiry.new}
+              href={paths.dashboard.product.new}
               variant="contained"
               startIcon={<Iconify icon="mingcute:add-line" />}
             >
-              New Inquiry
+              New Product
             </Button>
           }
           sx={{
@@ -154,13 +113,13 @@ export default function ProductListView() {
         />
 
         <Card>
-          <InquiryTableToolbar filters={filters} onFilters={handleFilters} />
+          <ProductTableToolbar filters={filters} onFilters={handleFilters} />
 
           <TableContainer sx={{ position: 'relative', overflow: 'unset' }}>
             <TableSelectedAction
               dense={table.dense}
               numSelected={table.selected.length}
-              rowCount={dataFiltered.length}
+              // rowCount={dataFiltered.length}
               onSelectAllRows={(checked) =>
                 table.onSelectAllRows(
                   checked,
@@ -182,7 +141,7 @@ export default function ProductListView() {
                   order={table.order}
                   orderBy={table.orderBy}
                   headLabel={TABLE_HEAD}
-                  rowCount={dataFiltered.length}
+                  // rowCount={dataFiltered.length}
                   numSelected={table.selected.length}
                   onSort={table.onSort}
                   onSelectAllRows={(checked) =>
@@ -194,36 +153,19 @@ export default function ProductListView() {
                 />
 
                 <TableBody>
-                  {dataFiltered
-                    .slice(
-                      table.page * table.rowsPerPage,
-                      table.page * table.rowsPerPage + table.rowsPerPage
-                    )
-                    .map((row, index) => (
-                      <InquiryTableRow
-                        key={row._id}
-                        index={index}
-                        row={row}
-                        selected={table.selected.includes(row._id)}
-                        onSelectRow={() => table.onSelectRow(row._id)}
-                        onDeleteRow={() => handleDeleteRows(row._id,)}
-                        onEditRow={() => handleEditRow(row._id)}
-                      />
-                    ))}
-
+                  <ProductTableRow  />
                   <TableEmptyRows
                     height={denseHeight}
-                    emptyRows={emptyRows(table.page, table.rowsPerPage, dataFiltered.length)}
+                    emptyRows={emptyRows(table.page, table.rowsPerPage)}
                   />
 
-                  <TableNoData notFound={notFound} />
+                  <TableNoData />
                 </TableBody>
               </Table>
             </Scrollbar>
           </TableContainer>
 
           <TablePaginationCustom
-            count={dataFiltered.length}
             page={table.page}
             rowsPerPage={table.rowsPerPage}
             onPageChange={table.onChangePage}
@@ -255,28 +197,22 @@ export default function ProductListView() {
 
 // ----------------------------------------------------------------------
 
-function applyFilter({ inputData, comparator, filters }) {
-  const { status, name } = filters;
-
-  const stabilizedThis = inputData.map((el, index) => [el, index]);
-
-  stabilizedThis.sort((a, b) => {
-    const order = comparator(a[0], b[0]);
-    if (order !== 0) return order;
-    return a[1] - b[1];
-  });
-
-  inputData = stabilizedThis.map((el) => el[0]);
-
-  if (name) {
-    inputData = inputData.filter(
-      (user) => user.firstName.toLowerCase().indexOf(name.toLowerCase()) !== -1
-    );
-  }
-
-  if (status !== 'all') {
-    inputData = inputData.filter((order) => order.status === status);
-  }
-
-  return inputData;
+export default ProductListView;
+function applyFilter({ comparator, filters }) {
+  // const { status, name } = filters;
+  // const stabilizedThis = inputData.map((el, index) => [el, index]);
+  // stabilizedThis.sort((a, b) => {
+  //   const order = comparator(a[0], b[0]);
+  //   if (order !== 0) return order;
+  //   return a[1] - b[1];
+  // });
+  // inputData = stabilizedThis.map((el) => el[0]);
+  // if (name) {
+  //   inputData = inputData.filter(
+  //     (user) => user.firstName.toLowerCase().indexOf(name.toLowerCase()) !== -1
+  //   );
+  // }
+  // if (status !== 'all') {
+  //   inputData = inputData.filter((order) => order.status === status);
+  // }
 }

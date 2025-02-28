@@ -1,6 +1,7 @@
 import { Helmet } from 'react-helmet-async';
 
-import { ProductCreateView } from 'src/sections/Product/view/product-create-view';
+import ProductCreateView from 'src/sections/Product/view/product-create-view';
+
 
 
 // ----------------------------------------------------------------------
@@ -12,7 +13,7 @@ import { ProductCreateView } from 'src/sections/Product/view/product-create-view
         <title> Dashboard: Create a new Product</title>
       </Helmet>
 
-      <ProductCreateView />
+      <ProductCreateView/>
     </>
   );
 }
