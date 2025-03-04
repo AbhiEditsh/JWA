@@ -1,0 +1,3 @@
+export { default as CategoryCreateView } from './category-create-view';
+export { default as CategoryEditView }   from './category-edit-view';
+export { default as CategoryCreateView } from './category-create-view';

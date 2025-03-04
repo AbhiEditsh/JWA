@@ -61,10 +61,16 @@ export function useNavData() {
               { title: t('edit'), path: paths.dashboard.product.edit },
             ],
           },
+         
           {
             title: t('Category'),
-            path: paths.dashboard.category,
-            icon: ICONS.ecommerce,
+            path: paths.dashboard.category.root,
+            icon: ICONS.category,
+            children: [
+              { title: t('list'), path: paths.dashboard.category.list },
+              { title: t('create'), path: paths.dashboard.category.new },
+              { title: t('edit'), path: paths.dashboard.category.edit },
+            ],
           },
           {
             title: t('Order'),

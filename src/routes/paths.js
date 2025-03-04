@@ -23,7 +23,12 @@ export const paths = {
       list: `${ROOTS.DASHBOARD}/product/list`,
       edit: `${ROOTS.DASHBOARD}/product/edit`,
     },
-    category: `${ROOTS.DASHBOARD}/category`,
+    category: {
+      root: `${ROOTS.DASHBOARD}/category`,
+      new: `${ROOTS.DASHBOARD}/category/new`,
+      list: `${ROOTS.DASHBOARD}/category/list`,
+      edit: `${ROOTS.DASHBOARD}/category/edit`,
+    },
     order: `${ROOTS.DASHBOARD}/order`,
     payment: `${ROOTS.DASHBOARD}/payment`,
   },

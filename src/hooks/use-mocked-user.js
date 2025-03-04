@@ -1,10 +1,11 @@
 import { useAuthContext } from 'src/auth/hooks';
 
 export function useMockedUser() {
-  const { user: authUser } = useAuthContext(); // Renaming to avoid conflict
+  const { user: authUser } = useAuthContext(); 
 
   const mockedUser = {
-    id: '8864c717-587d-472a-929a-8e5f298024da-0',
+    id: authUser
+    ._id,
     displayName: authUser?.username || 'Guest User',
     email: authUser?.email || 'guest@example.com',
     password: authUser?.password || '',
