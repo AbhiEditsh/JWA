@@ -28,17 +28,17 @@ import {
   TableSelectedAction,
   TablePaginationCustom,
 } from 'src/components/table';
-
+import { useSnackbar } from 'src/components/snackbar';
 import CategoryTableRow from '../category-table-row';
 import CategoryTableToolbar from '../category-table-toolbar';
 import { useGetCategoriesList } from 'src/api/categories';
-import { enqueueSnackbar } from 'notistack';
 import axios from 'axios';
 
 const TABLE_HEAD = [
-  { id: 'srNo', label: 'Sr No' },
-  { id: 'name', label: 'Category Name' },
-  { id: 'description', label: 'Category Description' },
+  { id: 'srNo', label: 'Sr No', width: 5 },
+  { id: 'Image', label: 'Category Image', width: 10 },
+  { id: 'name', label: 'Category Name', width: 10 },
+  { id: 'description', label: 'Category Description', width: 88 },
   { id: '', width: 88 },
 ];
 
@@ -48,6 +48,7 @@ const defaultFilters = {
 };
 
 function CategoryListView() {
+  const { enqueueSnackbar } = useSnackbar();
   const table = useTable();
   const settings = useSettingsContext();
   const router = useRouter();
@@ -55,7 +56,6 @@ function CategoryListView() {
 
   const [filters, setFilters] = useState(defaultFilters);
   const { categories, categoriesError, mutate } = useGetCategoriesList();
-
 
   useEffect(() => {
     if (categoriesError) {
@@ -88,25 +88,39 @@ function CategoryListView() {
 
   const handleDeleteRows = useCallback(async () => {
     try {
-      const sortedSelectedIds = [...table.selected].sort(); 
-      const URL = `${import.meta.env.VITE_AUTH_API}/api/admin/categories/multi-delete`;
-      const response = await axios.delete(URL, {
-        data: { ids: sortedSelectedIds }, 
-      });
-      if (response.status === 200) {
-        enqueueSnackbar(response.message, { variant: 'success' });
-        mutate(); 
-        confirm.onFalse();
-        table.onDeselectAllRows();
+      const selectedIds = [...table.selected];
+
+      let URL, payload, response;
+
+      if (selectedIds.length === 1) {
+        const id = selectedIds[0];
+        URL = `${import.meta.env.VITE_AUTH_API}/api/admin/categories/delete/${id}`;
+        response = await axios.delete(URL);
+      } else if (selectedIds.length > 1) {
+        URL = `${import.meta.env.VITE_AUTH_API}/api/admin/categories/multi-delete`;
+        payload = { ids: selectedIds };
+        response = await axios.delete(URL, { data: payload });
       } else {
-        enqueueSnackbar(response.message || 'Failed to delete categories', { variant: 'error' });
+        enqueueSnackbar('No categories selected for deletion', { variant: 'warning' });
+        return;
+      }
+
+      if (response.status === 200) {
+        enqueueSnackbar(response.message || 'Categories deleted successfully', {
+          variant: 'success',
+        });
+        mutate();
+        confirm.onFalse();
+      } else {
+        enqueueSnackbar(response.message || 'Failed to delete categories', {
+          variant: 'error',
+        });
       }
     } catch (error) {
       console.error('Failed to delete categories', error);
       enqueueSnackbar('Failed to delete categories', { variant: 'error' });
     }
   }, [table.selected, enqueueSnackbar, mutate, confirm, table]);
-
   const handleEditRow = useCallback(
     (id) => {
       router.push(paths.dashboard.category.edit(id));
@@ -146,7 +160,7 @@ function CategoryListView() {
             <TableSelectedAction
               dense={table.dense}
               numSelected={table.selected.length}
-              rowCount={categories?.length || 0} // Total length of the original dataset
+              rowCount={dataFiltered?.length}
               onSelectAllRows={(checked) =>
                 table.onSelectAllRows(
                   checked,
@@ -168,7 +182,7 @@ function CategoryListView() {
                   order={table.order}
                   orderBy={table.orderBy}
                   headLabel={TABLE_HEAD}
-                  rowCount={categories?.length || 0} // Total length of the original dataset
+                  rowCount={categories?.length}
                   numSelected={table.selected.length}
                   onSort={table.onSort}
                   onSelectAllRows={(checked) =>
@@ -191,8 +205,8 @@ function CategoryListView() {
                         index={index}
                         row={row}
                         selected={table.selected.includes(row._id)}
-                        onSelectRow={() => table.onSelectRow(row._id)} // Toggle selection for a single row
-                        onDeleteRow={() => handleDeleteRows([row._id])} // Delete a single row
+                        onSelectRow={() => table.onSelectRow(row._id)}
+                        onDeleteRow={() => handleDeleteRows([row._id])}
                         onEditRow={() => handleEditRow(row._id)}
                       />
                     ))}
@@ -208,6 +222,7 @@ function CategoryListView() {
           </TableContainer>
 
           <TablePaginationCustom
+            count={dataFiltered.length}
             page={table.page}
             rowsPerPage={table.rowsPerPage}
             onPageChange={table.onChangePage}

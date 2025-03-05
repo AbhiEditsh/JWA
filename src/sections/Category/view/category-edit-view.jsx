@@ -1,6 +1,6 @@
 import React from 'react';
 
-// import PropTypes from 'prop-types';
+import PropTypes from 'prop-types';
 
 import Container from '@mui/material/Container';
 
@@ -23,11 +23,11 @@ export default function CategoryEditView() {
         sx={{ mb: { xs: 3, md: 5 } }}
       />
 
-      <CategoryNewEditForm />
+      <CategoryNewEditForm categoryId={id}/>
     </Container>
   );
 }
 
-// ProductEditView.propTypes = {
-//   id: PropTypes.string,
-// };
+CategoryEditView.propTypes = {
+  id: PropTypes.string,
+};

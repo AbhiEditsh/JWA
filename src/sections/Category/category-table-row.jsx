@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { Checkbox, Button, MenuItem, TableRow, TableCell, IconButton } from '@mui/material';
+import { Checkbox, Button, MenuItem, TableRow, TableCell, IconButton, Avatar } from '@mui/material';
 
 import { useBoolean } from 'src/hooks/use-boolean';
 import Iconify from 'src/components/iconify';
@@ -14,7 +14,7 @@ export default function CategoryTableRow({
   onSelectRow,
   onDeleteRow,
 }) {
-  const { name, description } = row;
+  const { ProductImage, name, description } = row;
 
   const confirm = useBoolean();
   const popover = usePopover();
@@ -26,20 +26,37 @@ export default function CategoryTableRow({
           <Checkbox checked={selected} onClick={onSelectRow} />
         </TableCell>
 
-        <TableCell>
-          {index + 1}
+        <TableCell>{index + 1}</TableCell>
+
+        <TableCell sx={{ display: 'flex', alignItems: 'center' }}>
+          <Avatar alt={`${name}`} src={ProductImage} sx={{ mr: 2 }} />
         </TableCell>
 
         <TableCell>{name}</TableCell>
 
         <TableCell>{description}</TableCell>
 
+        <TableCell align="right" sx={{ px: 1, whiteSpace: 'nowrap', align: 'center' }}>
+          <Tooltip title="Demo" placement="top" arrow>
+            <IconButton color={quickEdit.value ? 'inherit' : 'default'} onClick={quickEdit.onTrue}>
+              <Iconify icon="solar:pen-bold" sx={{ textAlign: 'center' }} />
+            </IconButton>
+          </Tooltip>
+        </TableCell>
+
         <TableCell align="right">
-          <IconButton onClick={popover.onOpen}>
+          <IconButton color={popover.open ? 'inherit' : 'default'} onClick={popover.onOpen}>
             <Iconify icon="eva:more-vertical-fill" />
           </IconButton>
         </TableCell>
       </TableRow>
+
+
+      <EmployeeQuickEditForm
+        currentEmployee={row}
+        open={quickEdit.value}
+        onClose={quickEdit.onFalse}
+      />
 
       <CustomPopover
         open={popover.open}
@@ -50,8 +67,8 @@ export default function CategoryTableRow({
         {/* Delete Option */}
         <MenuItem
           onClick={() => {
-            confirm.onTrue(); 
-            popover.onClose(); 
+            confirm.onTrue();
+            popover.onClose();
           }}
           sx={{ color: 'error.main' }}
         >
@@ -74,7 +91,7 @@ export default function CategoryTableRow({
         open={confirm.value}
         onClose={confirm.onFalse}
         title="Delete Category"
-        content="Are you sure you want to delete this category?"
+        content="Are you sure you want to delete?"
         action={
           <Button variant="contained" color="error" onClick={onDeleteRow}>
             Delete
@@ -85,16 +102,12 @@ export default function CategoryTableRow({
   );
 }
 
-// Prop Types Validation
 CategoryTableRow.propTypes = {
-  row: PropTypes.shape({
-    _id: PropTypes.string.isRequired,
-    name: PropTypes.string.isRequired,
-    description: PropTypes.string.isRequired,
-  }).isRequired,
+  row: PropTypes.object.isRequired,
   index: PropTypes.number.isRequired,
   selected: PropTypes.bool.isRequired,
   onEditRow: PropTypes.func.isRequired,
   onSelectRow: PropTypes.func.isRequired,
   onDeleteRow: PropTypes.func.isRequired,
 };
+``;
