@@ -29,17 +29,17 @@ import {
   TablePaginationCustom,
 } from 'src/components/table';
 import { useSnackbar } from 'src/components/snackbar';
+import axios from 'axios';
+import { useGetCategoriesList } from 'src/api/categories';
 import CategoryTableRow from '../category-table-row';
 import CategoryTableToolbar from '../category-table-toolbar';
-import { useGetCategoriesList } from 'src/api/categories';
-import axios from 'axios';
 
 const TABLE_HEAD = [
-  { id: 'srNo', label: 'Sr No', width: 5 },
-  { id: 'Image', label: 'Category Image', width: 10 },
-  { id: 'name', label: 'Category Name', width: 10 },
-  { id: 'description', label: 'Category Description', width: 88 },
-  { id: '', width: 88 },
+  { id: 'srNo', label: 'Sr No', width: '5%' },
+  { id: 'Image', label: 'Category Image', width: '10%' },
+  { id: 'name', label: 'Category Name', width: '25%' },
+  { id: 'description', label: 'Category Description', width: '50%' },
+  { id: 'Action', label: 'Action', width: '5%' },
 ];
 
 const defaultFilters = {
@@ -89,9 +89,10 @@ function CategoryListView() {
   const handleDeleteRows = useCallback(async () => {
     try {
       const selectedIds = [...table.selected];
-
-      let URL, payload, response;
-
+      let URL;
+      let payload;
+      let response;
+  
       if (selectedIds.length === 1) {
         const id = selectedIds[0];
         URL = `${import.meta.env.VITE_AUTH_API}/api/admin/categories/delete/${id}`;
@@ -104,7 +105,7 @@ function CategoryListView() {
         enqueueSnackbar('No categories selected for deletion', { variant: 'warning' });
         return;
       }
-
+  
       if (response.status === 200) {
         enqueueSnackbar(response.message || 'Categories deleted successfully', {
           variant: 'success',
@@ -120,7 +121,10 @@ function CategoryListView() {
       console.error('Failed to delete categories', error);
       enqueueSnackbar('Failed to delete categories', { variant: 'error' });
     }
-  }, [table.selected, enqueueSnackbar, mutate, confirm, table]);
+  }, [ enqueueSnackbar, mutate, confirm, table]);
+  
+
+
   const handleEditRow = useCallback(
     (id) => {
       router.push(paths.dashboard.category.edit(id));

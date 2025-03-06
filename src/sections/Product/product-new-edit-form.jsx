@@ -2,7 +2,6 @@ import * as Yup from 'yup';
 import { useCallback } from 'react';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import axios from 'axios';
 import { useMockedUser } from 'src/hooks/use-mocked-user';
 import { useSnackbar } from 'src/components/snackbar';
 import LoadingButton from '@mui/lab/LoadingButton';
@@ -17,7 +16,6 @@ import FormProvider, {
   RHFUploadAvatar,
   RHFAutocomplete,
 } from 'src/components/hook-form';
-import { useGetCategoriesList } from 'src/api/product';
 
 export default function ProductNewEditForm() {
   const { user } = useMockedUser();

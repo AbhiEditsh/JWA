@@ -42,7 +42,7 @@ export const dashboardRoutes = [
           { element: <CategoryListPage />, index: true },
           { path: 'list', element: <CategoryListPage /> },
           { path: 'new', element: <CategoryCreatePage /> },
-          { path: 'edit', element: <CategoryEditPage /> },
+          { path: ':id/edit', element: <CategoryEditPage /> },
         ],
       },
       { path: 'order', element: <Order /> },

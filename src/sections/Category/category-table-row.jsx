@@ -1,10 +1,21 @@
 import PropTypes from 'prop-types';
-import { Checkbox, Button, MenuItem, TableRow, TableCell, IconButton, Avatar } from '@mui/material';
+import {
+  Checkbox,
+  Button,
+  MenuItem,
+  TableRow,
+  TableCell,
+  IconButton,
+  Avatar,
+  Tooltip,
+} from '@mui/material';
 
 import { useBoolean } from 'src/hooks/use-boolean';
 import Iconify from 'src/components/iconify';
 import { ConfirmDialog } from 'src/components/custom-dialog';
 import CustomPopover, { usePopover } from 'src/components/custom-popover';
+import CategoryQuickEditForm from './category-quick-edit-form';
+import { useRouter } from 'src/routes/hooks';
 
 export default function CategoryTableRow({
   row,
@@ -17,7 +28,9 @@ export default function CategoryTableRow({
   const { ProductImage, name, description } = row;
 
   const confirm = useBoolean();
+  const quickEdit = useBoolean();
   const popover = usePopover();
+  const router = useRouter();
 
   return (
     <>
@@ -37,7 +50,7 @@ export default function CategoryTableRow({
         <TableCell>{description}</TableCell>
 
         <TableCell align="right" sx={{ px: 1, whiteSpace: 'nowrap', align: 'center' }}>
-          <Tooltip title="Demo" placement="top" arrow>
+          <Tooltip title="Category" placement="top" arrow>
             <IconButton color={quickEdit.value ? 'inherit' : 'default'} onClick={quickEdit.onTrue}>
               <Iconify icon="solar:pen-bold" sx={{ textAlign: 'center' }} />
             </IconButton>
@@ -51,9 +64,8 @@ export default function CategoryTableRow({
         </TableCell>
       </TableRow>
 
-
-      <EmployeeQuickEditForm
-        currentEmployee={row}
+      <CategoryQuickEditForm
+        currentCategory={row}
         open={quickEdit.value}
         onClose={quickEdit.onFalse}
       />
@@ -79,6 +91,7 @@ export default function CategoryTableRow({
         <MenuItem
           onClick={() => {
             onEditRow();
+            router.push(`/dashboard/category/${row._id}/edit`);
             popover.onClose();
           }}
         >
@@ -110,4 +123,3 @@ CategoryTableRow.propTypes = {
   onSelectRow: PropTypes.func.isRequired,
   onDeleteRow: PropTypes.func.isRequired,
 };
-``;

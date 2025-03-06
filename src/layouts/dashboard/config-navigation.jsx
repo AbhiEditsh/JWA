@@ -58,7 +58,6 @@ export function useNavData() {
             children: [
               { title: t('list'), path: paths.dashboard.product.list },
               { title: t('create'), path: paths.dashboard.product.new },
-              { title: t('edit'), path: paths.dashboard.product.edit },
             ],
           },
          
@@ -69,7 +68,6 @@ export function useNavData() {
             children: [
               { title: t('list'), path: paths.dashboard.category.list },
               { title: t('create'), path: paths.dashboard.category.new },
-              { title: t('edit'), path: paths.dashboard.category.edit },
             ],
           },
           {

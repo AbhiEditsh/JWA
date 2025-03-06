@@ -7,7 +7,6 @@ export function useGetCategoriesList() {
   const URL = `${import.meta.env.VITE_AUTH_API}/api/admin/categories`;
 
   const { data, isLoading, error, isValidating, mutate } = useSWR(URL, fetcher);
-  console.log(data);
 
   const memoizedValue = useMemo(
     () => ({
@@ -23,3 +22,6 @@ export function useGetCategoriesList() {
 
   return memoizedValue;
 }
+
+
+

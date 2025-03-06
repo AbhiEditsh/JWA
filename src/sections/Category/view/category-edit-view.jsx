@@ -6,13 +6,17 @@ import Container from '@mui/material/Container';
 
 import { paths } from 'src/routes/paths';
 
+import { useSettingsContext } from 'src/components/settings';
+
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 
 import CategoryNewEditForm from '../category-new-edit-form';
 
-export default function CategoryEditView() {
+export default function CategoryEditView({id}) {
+  const settings = useSettingsContext();
+
   return (
-    <Container maxWidth="lg">
+    <Container maxWidth={settings.themeStretch ? false : 'lg'}>
       <CustomBreadcrumbs
         heading="Edit"
         links={[
