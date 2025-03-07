@@ -10,12 +10,15 @@ import {
   Tooltip,
 } from '@mui/material';
 
+import { useRouter } from 'src/routes/hooks';
+import { useSnackbar } from 'src/components/snackbar';
 import { useBoolean } from 'src/hooks/use-boolean';
 import Iconify from 'src/components/iconify';
 import { ConfirmDialog } from 'src/components/custom-dialog';
 import CustomPopover, { usePopover } from 'src/components/custom-popover';
 import CategoryQuickEditForm from './category-quick-edit-form';
-import { useRouter } from 'src/routes/hooks';
+import axios from 'axios';
+import { useGetCategoriesList } from 'src/api/categories';
 
 export default function CategoryTableRow({
   row,
@@ -26,11 +29,31 @@ export default function CategoryTableRow({
   onDeleteRow,
 }) {
   const { ProductImage, name, description } = row;
+  const { enqueueSnackbar } = useSnackbar();
 
   const confirm = useBoolean();
   const quickEdit = useBoolean();
   const popover = usePopover();
   const router = useRouter();
+  const { mutate } = useGetCategoriesList();
+
+  const handleDeleteRow = async (id) => {
+    console.log(id);
+
+    try {
+      const response = await axios.delete(
+        `${import.meta.env.VITE_AUTH_API}/api/admin/categories/delete/${id}`
+      );
+
+      console.log(response.data.message);
+      enqueueSnackbar(response.data.message, { variant: 'success' });
+      mutate()
+    } catch (error) {
+      const errorMessage = error?.response?.data?.message || 'Failed to delete category';
+      enqueueSnackbar(errorMessage, { variant: 'error' });
+      console.error('Error Details:', errorMessage);
+    }
+  };
 
   return (
     <>
@@ -42,17 +65,17 @@ export default function CategoryTableRow({
         <TableCell>{index + 1}</TableCell>
 
         <TableCell sx={{ display: 'flex', alignItems: 'center' }}>
-          <Avatar alt={`${name}`} src={ProductImage} sx={{ mr: 2 }} />
+          <Avatar alt={name} src={ProductImage} sx={{ mr: 2 }} />
         </TableCell>
 
         <TableCell>{name}</TableCell>
 
         <TableCell>{description}</TableCell>
 
-        <TableCell align="right" sx={{ px: 1, whiteSpace: 'nowrap', align: 'center' }}>
-          <Tooltip title="Category" placement="top" arrow>
+        <TableCell align="right">
+          <Tooltip title="Edit Category" placement="top" arrow>
             <IconButton color={quickEdit.value ? 'inherit' : 'default'} onClick={quickEdit.onTrue}>
-              <Iconify icon="solar:pen-bold" sx={{ textAlign: 'center' }} />
+              <Iconify icon="solar:pen-bold" />
             </IconButton>
           </Tooltip>
         </TableCell>
@@ -76,7 +99,6 @@ export default function CategoryTableRow({
         arrow="right-top"
         sx={{ width: 140 }}
       >
-        {/* Delete Option */}
         <MenuItem
           onClick={() => {
             confirm.onTrue();
@@ -104,9 +126,16 @@ export default function CategoryTableRow({
         open={confirm.value}
         onClose={confirm.onFalse}
         title="Delete Category"
-        content="Are you sure you want to delete?"
+        content="Are you sure you want to delete this category?"
         action={
-          <Button variant="contained" color="error" onClick={onDeleteRow}>
+          <Button
+            variant="contained"
+            color="error"
+            onClick={() => {
+              handleDeleteRow(row._id);
+              confirm.onFalse();
+            }}
+          >
             Delete
           </Button>
         }

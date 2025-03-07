@@ -92,7 +92,7 @@ function CategoryListView() {
       let URL;
       let payload;
       let response;
-  
+
       if (selectedIds.length === 1) {
         const id = selectedIds[0];
         URL = `${import.meta.env.VITE_AUTH_API}/api/admin/categories/delete/${id}`;
@@ -105,7 +105,7 @@ function CategoryListView() {
         enqueueSnackbar('No categories selected for deletion', { variant: 'warning' });
         return;
       }
-  
+
       if (response.status === 200) {
         enqueueSnackbar(response.message || 'Categories deleted successfully', {
           variant: 'success',
@@ -121,9 +121,7 @@ function CategoryListView() {
       console.error('Failed to delete categories', error);
       enqueueSnackbar('Failed to delete categories', { variant: 'error' });
     }
-  }, [ enqueueSnackbar, mutate, confirm, table]);
-  
-
+  }, [enqueueSnackbar, mutate, confirm, table]);
 
   const handleEditRow = useCallback(
     (id) => {
