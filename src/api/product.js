@@ -9,11 +9,11 @@ export function useGetProducts() {
 
   const memoizedValue = useMemo(
     () => ({
-      products: data?.students || [],
+      products: data?.products|| [],
       productsLoading: isLoading,
       productsError: error,
       productsValidating: isValidating,
-    //   productsEmpty: !isLoading && !data?.data?.students.length,
+      productsEmpty: !isLoading && !data.products?.length,
       mutate,
     }),
     [data, isLoading, error, isValidating, mutate]
@@ -31,7 +31,6 @@ export function useGetCategoriesList(id) {
       categoriesLoading: isLoading,
       categoriesError: error,
       categoriesValidating: isValidating,
-    //   categoriesEmpty: !isLoading && !data?.students.length,
     }),
     [data, error, isLoading, isValidating]
   );

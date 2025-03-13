@@ -70,9 +70,7 @@ function CategoryListView() {
   });
 
   const denseHeight = table.dense ? 56 : 56 + 20;
-
   const canReset = !!filters.name || filters.status !== 'all';
-
   const notFound = (!dataFiltered.length && canReset) || !dataFiltered.length;
 
   const handleFilters = useCallback(
@@ -157,7 +155,6 @@ function CategoryListView() {
 
         <Card>
           <CategoryTableToolbar filters={filters} onFilters={handleFilters} />
-
           <TableContainer sx={{ position: 'relative', overflow: 'unset' }}>
             <TableSelectedAction
               dense={table.dense}
@@ -222,9 +219,8 @@ function CategoryListView() {
               </Table>
             </Scrollbar>
           </TableContainer>
-
           <TablePaginationCustom
-            count={dataFiltered.length}
+            count={categories.length}
             page={table.page}
             rowsPerPage={table.rowsPerPage}
             onPageChange={table.onChangePage}

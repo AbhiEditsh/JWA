@@ -14,11 +14,11 @@ import { useRouter } from 'src/routes/hooks';
 import { useSnackbar } from 'src/components/snackbar';
 import { useBoolean } from 'src/hooks/use-boolean';
 import Iconify from 'src/components/iconify';
+import axios from 'axios';
 import { ConfirmDialog } from 'src/components/custom-dialog';
 import CustomPopover, { usePopover } from 'src/components/custom-popover';
-import CategoryQuickEditForm from './category-quick-edit-form';
-import axios from 'axios';
 import { useGetCategoriesList } from 'src/api/categories';
+import CategoryQuickEditForm from './category-quick-edit-form';
 
 export default function CategoryTableRow({
   row,
