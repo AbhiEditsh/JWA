@@ -21,16 +21,18 @@ export const paths = {
       root: `${ROOTS.DASHBOARD}/product`,
       new: `${ROOTS.DASHBOARD}/product/new`,
       list: `${ROOTS.DASHBOARD}/product/list`,
-      edit: `${ROOTS.DASHBOARD}/product/edit`,
+      edit: (id) => `${ROOTS.DASHBOARD}/product/${id}/edit`,
     },
     category: {
       root: `${ROOTS.DASHBOARD}/category`,
       new: `${ROOTS.DASHBOARD}/category/new`,
       list: `${ROOTS.DASHBOARD}/category/list`,
       edit: (id) => `${ROOTS.DASHBOARD}/category/${id}/edit`,
-
     },
-    order: `${ROOTS.DASHBOARD}/order`,
+    order: {
+      root: `${ROOTS.DASHBOARD}/order`,
+      list: `${ROOTS.DASHBOARD}/order/list`,
+    },
     payment: `${ROOTS.DASHBOARD}/payment`,
   },
 };

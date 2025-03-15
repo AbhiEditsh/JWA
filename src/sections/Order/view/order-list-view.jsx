@@ -32,8 +32,9 @@ import {
 import { useSnackbar } from 'src/components/snackbar';
 
 import { useGetProducts } from 'src/api/product';
-import ProductTableRow from '../product-table-row';
-import ProductTableToolbar from '../product-table-toolbar';
+import OrderTableRow from '../order-table-row';
+import OrderTableToolbar from '../order-table-toolbar';
+import { useGetOrder } from 'src/api/order';
 
 const TABLE_HEAD = [
   { id: 'Sr no', label: 'Sr No' },
@@ -49,12 +50,26 @@ const TABLE_HEAD = [
   { id: 'Action', label: 'Action', width: 88 },
 ];
 
+
+const TABLE_HEADS = [
+    { id: 'Sr no', label: 'Sr No' },
+    { id: 'userEmail', label: 'Product Image' },
+    { id: 'productName', label: 'Product Name' },
+    { id: 'category', label: 'Category' },
+    { id: 'available', label: 'Available', align: 'center' },
+    { id: 'price', label: 'Price', align: 'center' },
+    { id: 'oldPrice', label: 'Old Price', align: 'center' },
+    { id: 'rating', label: 'Rating', align: 'center' },
+    { id: 'sku', label: 'SKU', align: 'center' },
+    { id: 'gender', label: 'Gender', align: 'center' },
+    { id: 'Action', label: 'Action', width: 88 },
+  ];
 const defaultFilters = {
   name: '',
   status: 'all',
 };
 
-function ProductListView() {
+function OrderListView() {
   const table = useTable();
   const { enqueueSnackbar } = useSnackbar();
   const settings = useSettingsContext();
@@ -63,6 +78,8 @@ function ProductListView() {
 
   const [filters, setFilters] = useState(defaultFilters);
   const { products, productsError, mutate } = useGetProducts();
+  const { order } = useGetOrder();
+  console.log(order);
 
   useEffect(() => {
     if (productsError) {
@@ -161,7 +178,7 @@ function ProductListView() {
         />
 
         <Card>
-          <ProductTableToolbar filters={filters} onFilters={handleFilters} />
+          <OrderTableToolbar filters={filters} onFilters={handleFilters} />
 
           <TableContainer sx={{ position: 'relative', overflow: 'unset' }}>
             <TableSelectedAction
@@ -207,7 +224,7 @@ function ProductListView() {
                       table.page * table.rowsPerPage + table.rowsPerPage
                     )
                     .map((row, index) => (
-                      <ProductTableRow
+                      <OrderTableRow
                         key={row._id}
                         index={index}
                         row={row}
@@ -260,7 +277,7 @@ function ProductListView() {
   );
 }
 
-export default ProductListView;
+export default OrderListView;
 
 // ----------------------------------------------------------------------
 // Helper function to filter and sort product data

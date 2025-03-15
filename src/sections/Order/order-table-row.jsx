@@ -9,7 +9,7 @@ import CustomPopover, { usePopover } from 'src/components/custom-popover';
 import { useRouter } from 'src/routes/hooks';
 import { useGetProducts } from 'src/api/product';
 
-export default function ProductTableRow({
+export default function OrderTableRow({
   row,
   index,
   selected,
@@ -120,7 +120,7 @@ export default function ProductTableRow({
   );
 }
 
-ProductTableRow.propTypes = {
+OrderTableRow.propTypes = {
   row: PropTypes.object.isRequired,
   index: PropTypes.number.isRequired,
   selected: PropTypes.bool.isRequired,

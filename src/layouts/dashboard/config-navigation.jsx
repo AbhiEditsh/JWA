@@ -60,7 +60,7 @@ export function useNavData() {
               { title: t('create'), path: paths.dashboard.product.new },
             ],
           },
-         
+
           {
             title: t('Category'),
             path: paths.dashboard.category.root,
@@ -72,8 +72,9 @@ export function useNavData() {
           },
           {
             title: t('Order'),
-            path: paths.dashboard.order,
+            path: paths.dashboard.order.root,
             icon: ICONS.order,
+            children: [{ title: t('list'), path: paths.dashboard.order.list }],
           },
           {
             title: t('Payment'),

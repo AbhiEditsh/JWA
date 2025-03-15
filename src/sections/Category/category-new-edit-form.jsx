@@ -59,7 +59,8 @@ export default function CategoryNewEditForm({ categoryId }) {
   };
 
   const onSubmit = handleSubmit(async (data) => {
-    const URL = `${import.meta.env.VITE_AUTH_API}/api/admin/categories/${categoryId ? `update/${categoryId}` : 'create'}`;
+    const URL = `${import.meta.env.VITE_AUTH_API}/api/admin/categories/${categoryId ? 
+      `update/${categoryId}` : 'create'}`;
     const method = categoryId ? axios.put : axios.post;
 
     const productPictureUrl = profilePic ? await uploadImage(profilePic) : '';

@@ -1,5 +1,5 @@
 import * as Yup from 'yup';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useSnackbar } from 'src/components/snackbar';
@@ -19,8 +19,9 @@ import { paths } from 'src/routes/paths';
 import { useMockedUser } from 'src/hooks/use-mocked-user';
 import { useResponsive } from 'src/hooks/use-responsive';
 import { PRODUCT_GENDER } from 'src/_mock/_gender';
+import PropTypes from 'prop-types';
 
-export default function ProductNewEditForm() {
+export default function ProductNewEditForm({ productId }) {
   const { user } = useMockedUser();
   const { enqueueSnackbar } = useSnackbar();
   const router = useRouter();
@@ -65,7 +66,31 @@ export default function ProductNewEditForm() {
     setValue,
     formState: { isSubmitting },
     control,
+    reset,
   } = methods;
+
+  useEffect(() => {
+    if (!productId) return;
+    axios
+      .get(`${import.meta.env.VITE_AUTH_API}/api/product/${productId}`)
+      .then(({ data }) => {
+        reset({
+          name: data.product.name,
+          description: data.product.description,
+          category: data.product.category.name,
+          price: data.product.price,
+          gender: data.product.gender,
+          oldPrice: data.product.oldPrice,
+          rating: data.product.rating,
+          sku: data.product.sku,
+          author: data.product.author,
+          Available: data.product.Available,
+          author: user.displayName,
+        });
+        setProfilePic(data.product.ProductImage);
+      })
+      .catch((error) => console.error('Fetch error:', error));
+  }, [productId, reset]);
 
   const uploadImage = async (file) => {
     const formData = new FormData();
@@ -86,38 +111,86 @@ export default function ProductNewEditForm() {
     }
   };
 
+  // const onSubmit = handleSubmit(async (data) => {
+  //   try {
+  //     const productPictureUrl = profilePic ? await uploadImage(profilePic) : '';
+  //     const payload = {
+  //       name: data.name,
+  //       category: data.category,
+  //       description: data.description,
+  //       price: data.price,
+  //       gender: data.gender,
+  //       oldPrice: data.oldPrice,
+  //       rating: data.rating,
+  //       author: user.id,
+  //       sku: data.sku,
+  //       Available: data.Available,
+  //       ProductImage: productPictureUrl,
+  //     };
+  //     console.log(payload);
+
+  //     const token = sessionStorage.getItem('token');
+  //     const response = await axios.post(
+  //       `${import.meta.env.VITE_AUTH_API}/api/product/admin/create`,
+  //       payload,
+  //       {
+  //         headers: {
+  //           Authorization: `Bearer ${token}`,
+  //         },
+  //       }
+  //     );
+
+  //     enqueueSnackbar(response.data.message, { variant: 'success' });
+  //     router.push(paths.dashboard.product.list);
+  //   } catch (error) {
+  //     enqueueSnackbar(error.response?.data?.message || 'An error occurred', { variant: 'error' });
+  //   }
+  // });
+
   const onSubmit = handleSubmit(async (data) => {
+    const URL = `${import.meta.env.VITE_AUTH_API}/api/product/admin/${
+      productId ? `update/${productId}` : 'create'
+    }`;
+    const method = productId ? axios.put : axios.post;
+  
+    const token = sessionStorage.getItem('token');
+  
+    const productPictureUrl = profilePic ? await uploadImage(profilePic) : '';
+  
+    const payload = {
+      name: data.name,
+      category: data.category,
+      description: data.description,
+      price: data.price,
+      gender: data.gender,
+      oldPrice: data.oldPrice,
+      rating: data.rating,
+      author: user.id,
+      sku: data.sku,
+      Available: data.Available,
+      ProductImage: productPictureUrl,
+    };
+  
     try {
-      const productPictureUrl = profilePic ? await uploadImage(profilePic) : '';
-      const payload = {
-        name: data.name,
-        category: data.category,
-        description: data.description,
-        price: data.price,
-        gender: data.gender,
-        oldPrice: data.oldPrice,
-        rating: data.rating,
-        author: user.id,
-        sku: data.sku,
-        Available: data.Available,
-        ProductImage: productPictureUrl,
-      };
-      console.log(payload);
-      
-
-      const token = sessionStorage.getItem('token');
-      const response = await axios.post('http://localhost:7000/api/product/admin/create', payload, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      enqueueSnackbar(response.data.message, { variant: 'success' });
+      const { data: response } = await method(
+        URL,
+        payload, 
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+  
+      enqueueSnackbar(response.message, { variant: 'success' });
       router.push(paths.dashboard.product.list);
     } catch (error) {
-      enqueueSnackbar(error.response?.data?.message || 'An error occurred', { variant: 'error' });
+      enqueueSnackbar(error?.response?.data?.message || 'Submission error', { variant: 'error' });
+      console.error('Submission Error:', error);
     }
   });
+  
 
   const handleDrop = useCallback(
     (acceptedFiles) => {
@@ -196,3 +269,5 @@ export default function ProductNewEditForm() {
     </FormProvider>
   );
 }
+
+ProductNewEditForm.propTypes = { productId: PropTypes.string };

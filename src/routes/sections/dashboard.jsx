@@ -6,12 +6,12 @@ import DashboardLayout from 'src/layouts/dashboard';
 
 import { LoadingScreen } from 'src/components/loading-screen';
 
-
 // ----------------------------------------------------------------------
 
 const IndexPage = lazy(() => import('src/pages/dashboard/Index'));
-const Order = lazy(() => import('src/pages/dashboard/order'));
 const Payment = lazy(() => import('src/pages/dashboard/payment'));
+
+const OrderListPage = lazy(() => import('src/pages/dashboard/order/list'));
 
 const ProductListPage = lazy(() => import('src/pages/dashboard/product/list'));
 const ProductCreatePage = lazy(() => import('src/pages/dashboard/product/new'));
@@ -20,6 +20,8 @@ const ProductEditPage = lazy(() => import('src/pages/dashboard/product/edit'));
 const CategoryListPage = lazy(() => import('src/pages/dashboard/category/list'));
 const CategoryCreatePage = lazy(() => import('src/pages/dashboard/category/new'));
 const CategoryEditPage = lazy(() => import('src/pages/dashboard/category/edit'));
+
+
 // ----------------------------------------------------------------------
 
 export const dashboardRoutes = [
@@ -45,7 +47,13 @@ export const dashboardRoutes = [
           { path: ':id/edit', element: <CategoryEditPage /> },
         ],
       },
-      { path: 'order', element: <Order /> },
+      {
+        path: 'order',
+        children: [
+          { element: <OrderListPage />, index: true },
+          { path: 'list', element: <OrderListPage /> },
+        ],
+      },
       { path: 'payment', element: <Payment /> },
       {
         path: 'product',
@@ -53,7 +61,7 @@ export const dashboardRoutes = [
           { element: <ProductListPage />, index: true },
           { path: 'list', element: <ProductListPage /> },
           { path: 'new', element: <ProductCreatePage /> },
-          { path: 'edit', element: <ProductEditPage /> },
+          { path: ':id/edit', element: <ProductEditPage /> },
         ],
       },
     ],
