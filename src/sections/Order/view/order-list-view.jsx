@@ -36,34 +36,30 @@ import OrderTableRow from '../order-table-row';
 import OrderTableToolbar from '../order-table-toolbar';
 import { useGetOrder } from 'src/api/order';
 
+// const TABLE_HEAD = [
+//   { id: 'Sr no', label: 'Sr No' },
+//   { id: 'productImage', label: 'Product Image' },
+//   { id: 'productName', label: 'Product Name' },
+//   { id: 'category', label: 'Category' },
+//   { id: 'available', label: 'Available', align: 'center' },
+//   { id: 'price', label: 'Price', align: 'center' },
+//   { id: 'oldPrice', label: 'Old Price', align: 'center' },
+//   { id: 'rating', label: 'Rating', align: 'center' },
+//   { id: 'sku', label: 'SKU', align: 'center' },
+//   { id: 'gender', label: 'Gender', align: 'center' },
+//   { id: 'Action', label: 'Action', width: 88 },
+// ];
+
 const TABLE_HEAD = [
-  { id: 'Sr no', label: 'Sr No' },
-  { id: 'productImage', label: 'Product Image' },
-  { id: 'productName', label: 'Product Name' },
-  { id: 'category', label: 'Category' },
-  { id: 'available', label: 'Available', align: 'center' },
-  { id: 'price', label: 'Price', align: 'center' },
-  { id: 'oldPrice', label: 'Old Price', align: 'center' },
-  { id: 'rating', label: 'Rating', align: 'center' },
-  { id: 'sku', label: 'SKU', align: 'center' },
-  { id: 'gender', label: 'Gender', align: 'center' },
+  { id: 'Sr no', label: 'Sr No', align: 'center' },
+  { id: 'username', label: 'username', align: 'center' },
+  { id: 'product', label: 'Product', align: 'center' },
+  { id: 'paymentMethod', label: 'Payment Method', align: 'center' },
+  { id: 'paymentStatus', label: 'Payment Status', align: 'center' },
+  { id: 'status', label: 'Status', align: 'center' },
+  { id: 'amount', label: 'Amount', align: 'center' },
   { id: 'Action', label: 'Action', width: 88 },
 ];
-
-
-const TABLE_HEADS = [
-    { id: 'Sr no', label: 'Sr No' },
-    { id: 'userEmail', label: 'Product Image' },
-    { id: 'productName', label: 'Product Name' },
-    { id: 'category', label: 'Category' },
-    { id: 'available', label: 'Available', align: 'center' },
-    { id: 'price', label: 'Price', align: 'center' },
-    { id: 'oldPrice', label: 'Old Price', align: 'center' },
-    { id: 'rating', label: 'Rating', align: 'center' },
-    { id: 'sku', label: 'SKU', align: 'center' },
-    { id: 'gender', label: 'Gender', align: 'center' },
-    { id: 'Action', label: 'Action', width: 88 },
-  ];
 const defaultFilters = {
   name: '',
   status: 'all',
@@ -77,19 +73,17 @@ function OrderListView() {
   const confirm = useBoolean();
 
   const [filters, setFilters] = useState(defaultFilters);
-  const { products, productsError, mutate } = useGetProducts();
-  const { order } = useGetOrder();
-  console.log(order);
+  const { order, orderError, mutate } = useGetOrder();
 
   useEffect(() => {
-    if (productsError) {
-      enqueueSnackbar('Failed to fetch Products', { variant: 'error' });
+    if (orderError) {
+      enqueueSnackbar('Failed to fetch Order', { variant: 'error' });
     }
-  }, [productsError, enqueueSnackbar]);
+  }, [orderError, enqueueSnackbar]);
 
   // Filter and sort the product data
   const dataFiltered = applyFilter({
-    productData: products || [],
+    orderData: order || [],
     comparator: getComparator(table.order, table.orderBy),
     filters,
   });
@@ -158,11 +152,11 @@ function OrderListView() {
     <>
       <Container maxWidth={settings.themeStretch ? false : 'xl'}>
         <CustomBreadcrumbs
-          heading="Product List"
+          heading="Order List"
           links={[
             { name: 'Dashboard', href: paths.dashboard.root },
-            { name: 'Product', href: paths.dashboard.product.list },
-            { name: 'Product List' },
+            { name: 'Order', href: paths.dashboard.order.list },
+            { name: 'Order List' },
           ]}
           action={
             <Button
@@ -206,7 +200,7 @@ function OrderListView() {
                   order={table.order}
                   orderBy={table.orderBy}
                   headLabel={TABLE_HEAD}
-                  rowCount={products?.length || 0}
+                  rowCount={order?.length || 0}
                   numSelected={table.selected.length}
                   onSort={table.onSort}
                   onSelectAllRows={(checked) =>
@@ -282,11 +276,11 @@ export default OrderListView;
 // ----------------------------------------------------------------------
 // Helper function to filter and sort product data
 
-function applyFilter({ productData, comparator, filters }) {
+function applyFilter({ orderData, comparator, filters }) {
   const { status, name } = filters;
 
   // Stabilize the sorting
-  const stabilizedThis = productData.map((el, index) => [el, index]);
+  const stabilizedThis = orderData.map((el, index) => [el, index]);
   stabilizedThis.sort((a, b) => {
     const order = comparator(a[0], b[0]);
     if (order !== 0) return order;

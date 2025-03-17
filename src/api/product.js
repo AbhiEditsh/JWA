@@ -6,14 +6,13 @@ import { fetcher } from '../utils/axios';
 export function useGetProducts() {
   const URL = `${import.meta.env.VITE_AUTH_API}/api/product`;
   const { data, isLoading, error, isValidating, mutate } = useSWR(URL, fetcher);
-
   const memoizedValue = useMemo(
     () => ({
       products: data?.products|| [],
       productsLoading: isLoading,
       productsError: error,
       productsValidating: isValidating,
-      productsEmpty: !isLoading && !data.products?.length,
+      productsEmpty: !isLoading && !data.products,
       mutate,
     }),
     [data, isLoading, error, isValidating, mutate]

@@ -10,11 +10,11 @@ export function useGetOrder() {
 
   const memoizedValue = useMemo(
     () => ({
-      order: data?.products || [],
+      order: data || [],
       orderLoading: isLoading,
       orderError: error,
       orderValidating: isValidating,
-      // orderEmpty: !isLoading && !data.products?.length,
+      orderEmpty: !isLoading && !data?.length,
       mutate,
     }),
     [data, isLoading, error, isValidating, mutate]
