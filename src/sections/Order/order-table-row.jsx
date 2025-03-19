@@ -11,6 +11,7 @@ import {
   Checkbox,
   Avatar,
   Stack,
+  Chip,
 } from '@mui/material';
 import axios from 'axios';
 import { useBoolean } from 'src/hooks/use-boolean';
@@ -23,15 +24,13 @@ import { useGetProducts } from 'src/api/product';
 import { useState } from 'react';
 
 export default function OrderTableRow({ row, index, selected, onSelectRow, onEditRow }) {
-  const { userId, paymentMethod, paymentStatus, amount,status, _id, items = [] } = row;
+  const { userId, paymentMethod, paymentStatus, amount, status, _id, items = [] } = row;
   const [open, setOpen] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
   const confirm = useBoolean();
   const popover = usePopover();
   const router = useRouter();
   const { mutate } = useGetProducts();
-
-
 
   const handleDeleteRow = async (id) => {
     try {
@@ -44,6 +43,23 @@ export default function OrderTableRow({ row, index, selected, onSelectRow, onEdi
       const errorMessage = error?.response?.data?.message || 'Failed to delete product';
       enqueueSnackbar(errorMessage, { variant: 'error' });
       console.error('Error Details:', errorMessage);
+    }
+  };
+
+  const getStatusColor = (status) => {
+    switch (status) {
+      case 'Pending':
+        return 'warning'; // Yellow
+      case 'Processing':
+        return 'info'; // Blue
+      case 'Shipped':
+        return 'primary'; // Dark Blue
+      case 'Delivered':
+        return 'success'; // Green
+      case 'Cancelled':
+        return 'error'; // Red
+      default:
+        return 'default'; // Gray
     }
   };
 
@@ -65,7 +81,9 @@ export default function OrderTableRow({ row, index, selected, onSelectRow, onEdi
 
         <TableCell align="center">{paymentMethod || 'N/A'}</TableCell>
         <TableCell align="center">{paymentStatus || 'N/A'}</TableCell>
-        <TableCell align="center">{status || 'N/A'}</TableCell>
+        <TableCell align="center">
+          <Chip label={status} color={getStatusColor(status)} variant="Filled" size='small'/>
+        </TableCell>
         <TableCell align="center">{amount || 'N/A'}</TableCell>
 
         <TableCell align="right">
@@ -80,7 +98,6 @@ export default function OrderTableRow({ row, index, selected, onSelectRow, onEdi
         <TableCell colSpan={8} sx={{ p: 0, borderBottom: open ? '1px solid #ddd' : 'none' }}>
           <Collapse in={open} timeout="auto" unmountOnExit>
             <Box sx={{ p: 2 }}>
-
               {items.length > 0 ? (
                 <Box sx={{ mt: 2 }}>
                   {items.map((item, idx) => (
@@ -97,6 +114,9 @@ export default function OrderTableRow({ row, index, selected, onSelectRow, onEdi
                         sx={{ width: 40, height: 40 }}
                       />
                       <Typography variant="body2">{item?.productId?.name || 'No Name'}</Typography>
+                      <Typography variant="body2">
+                        Quantity : {item?.quantity || 'No quantity'}
+                      </Typography>
                       <Typography variant="body2" sx={{ ml: 'auto' }}>
                         ₹{item?.productId?.price || '0'}
                       </Typography>

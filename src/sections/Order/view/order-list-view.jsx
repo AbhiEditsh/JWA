@@ -36,20 +36,6 @@ import OrderTableRow from '../order-table-row';
 import OrderTableToolbar from '../order-table-toolbar';
 import { useGetOrder } from 'src/api/order';
 
-// const TABLE_HEAD = [
-//   { id: 'Sr no', label: 'Sr No' },
-//   { id: 'productImage', label: 'Product Image' },
-//   { id: 'productName', label: 'Product Name' },
-//   { id: 'category', label: 'Category' },
-//   { id: 'available', label: 'Available', align: 'center' },
-//   { id: 'price', label: 'Price', align: 'center' },
-//   { id: 'oldPrice', label: 'Old Price', align: 'center' },
-//   { id: 'rating', label: 'Rating', align: 'center' },
-//   { id: 'sku', label: 'SKU', align: 'center' },
-//   { id: 'gender', label: 'Gender', align: 'center' },
-//   { id: 'Action', label: 'Action', width: 88 },
-// ];
-
 const TABLE_HEAD = [
   { id: 'Sr no', label: 'Sr No', align: 'center' },
   { id: 'username', label: 'username', align: 'center' },
