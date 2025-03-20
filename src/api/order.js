@@ -6,7 +6,6 @@ import { fetcher } from '../utils/axios';
 export function useGetOrder() {
   const URL = `${import.meta.env.VITE_AUTH_API}/api/admin/orders`;
   const { data, isLoading, error, isValidating, mutate } = useSWR(URL, fetcher);
-  console.log('🤗', data);
 
   const memoizedValue = useMemo(
     () => ({

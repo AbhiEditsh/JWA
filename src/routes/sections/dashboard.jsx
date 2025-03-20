@@ -12,6 +12,7 @@ const IndexPage = lazy(() => import('src/pages/dashboard/Index'));
 const Payment = lazy(() => import('src/pages/dashboard/payment'));
 
 const OrderListPage = lazy(() => import('src/pages/dashboard/order/list'));
+const OrderEditPage = lazy(() => import('src/pages/dashboard/order/edit'));
 
 const ProductListPage = lazy(() => import('src/pages/dashboard/product/list'));
 const ProductCreatePage = lazy(() => import('src/pages/dashboard/product/new'));
@@ -52,6 +53,7 @@ export const dashboardRoutes = [
         children: [
           { element: <OrderListPage />, index: true },
           { path: 'list', element: <OrderListPage /> },
+          { path: ':id/edit', element: <OrderEditPage /> },
         ],
       },
       { path: 'payment', element: <Payment /> },

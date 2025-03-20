@@ -32,6 +32,7 @@ export const paths = {
     order: {
       root: `${ROOTS.DASHBOARD}/order`,
       list: `${ROOTS.DASHBOARD}/order/list`,
+      edit: (id) => `${ROOTS.DASHBOARD}/order/${id}/edit`,
     },
     payment: `${ROOTS.DASHBOARD}/payment`,
   },

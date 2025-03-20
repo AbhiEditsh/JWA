@@ -10,7 +10,8 @@ import TableContainer from '@mui/material/TableContainer';
 
 import { paths } from 'src/routes/paths';
 import { useRouter } from 'src/routes/hooks';
-import { RouterLink } from 'src/routes/components';
+
+import { _orders, ORDER_STATUS_OPTIONS } from 'src/_mock';
 
 import { useBoolean } from 'src/hooks/use-boolean';
 import Iconify from 'src/components/iconify';
@@ -30,16 +31,20 @@ import {
   TablePaginationCustom,
 } from 'src/components/table';
 import { useSnackbar } from 'src/components/snackbar';
+import { alpha } from '@mui/material/styles';
 
-import { useGetProducts } from 'src/api/product';
 import OrderTableRow from '../order-table-row';
 import OrderTableToolbar from '../order-table-toolbar';
 import { useGetOrder } from 'src/api/order';
+import { Tab, Tabs } from '@mui/material';
+import Label from 'src/components/label';
+const STATUS_OPTIONS = [{ value: 'all', label: 'All' }, ...ORDER_STATUS_OPTIONS];
 
 const TABLE_HEAD = [
   { id: 'Sr no', label: 'Sr No', align: 'center' },
   { id: 'username', label: 'username', align: 'center' },
   { id: 'product', label: 'Product', align: 'center' },
+  { id: 'item', label: 'Items', align: 'center' },
   { id: 'paymentMethod', label: 'Payment Method', align: 'center' },
   { id: 'paymentStatus', label: 'Payment Status', align: 'center' },
   { id: 'status', label: 'Status', align: 'center' },
@@ -57,6 +62,7 @@ function OrderListView() {
   const settings = useSettingsContext();
   const router = useRouter();
   const confirm = useBoolean();
+  const [tableData, setTableData] = useState(_orders);
 
   const [filters, setFilters] = useState(defaultFilters);
   const { order, orderError, mutate } = useGetOrder();
@@ -129,9 +135,16 @@ function OrderListView() {
 
   const handleEditRow = useCallback(
     (id) => {
-      router.push(paths.dashboard.product.edit(id));
+      router.push(paths.dashboard.order.edit(id));
     },
     [router]
+  );
+
+  const handleFilterStatus = useCallback(
+    (event, newValue) => {
+      handleFilters('status', newValue);
+    },
+    [handleFilters]
   );
 
   return (
@@ -144,20 +157,44 @@ function OrderListView() {
             { name: 'Order', href: paths.dashboard.order.list },
             { name: 'Order List' },
           ]}
-          action={
-            <Button
-              component={RouterLink}
-              href={paths.dashboard.product.new}
-              variant="contained"
-              startIcon={<Iconify icon="mingcute:add-line" />}
-            >
-              New Product
-            </Button>
-          }
           sx={{ mb: { xs: 3, md: 5 } }}
         />
 
         <Card>
+          <Tabs
+            value={filters.status}
+            onChange={handleFilterStatus}
+            sx={{
+              px: 2.5,
+              boxShadow: (theme) => `inset 0 -2px 0 0 ${alpha(theme.palette.grey[500], 0.08)}`,
+            }}
+          >
+            {STATUS_OPTIONS.map((tab) => (
+              <Tab
+                key={tab.value}
+                iconPosition="end"
+                value={tab.value}
+                label={tab.label}
+                icon={
+                  <Label
+                    variant={
+                      ((tab.value === 'all' || tab.value === filters.status) && 'filled') || 'soft'
+                    }
+                    color={
+                      (tab.value === 'completed' && 'success') ||
+                      (tab.value === 'pending' && 'warning') ||
+                      (tab.value === 'cancelled' && 'error') ||
+                      'default'
+                    }
+                  >
+                    {['completed', 'pending', 'cancelled', 'refunded'].includes(tab.value)
+                      ? tableData.filter((user) => user.status === tab.value).length
+                      : tableData.length}
+                  </Label>
+                }
+              />
+            ))}
+          </Tabs>
           <OrderTableToolbar filters={filters} onFilters={handleFilters} />
 
           <TableContainer sx={{ position: 'relative', overflow: 'unset' }}>
@@ -263,7 +300,10 @@ export default OrderListView;
 // Helper function to filter and sort product data
 
 function applyFilter({ orderData, comparator, filters }) {
-  const { status, name } = filters;
+  const { status, userId } = filters; 
+  console.log(userId);
+  
+
 
   // Stabilize the sorting
   const stabilizedThis = orderData.map((el, index) => [el, index]);
@@ -272,16 +312,20 @@ function applyFilter({ orderData, comparator, filters }) {
     if (order !== 0) return order;
     return a[1] - b[1];
   });
+
   let filteredData = stabilizedThis.map((el) => el[0]);
 
-  if (name) {
-    filteredData = filteredData.filter((item) =>
-      item.name.toLowerCase().includes(name.toLowerCase())
+  // Apply username filter
+  if (userId) {
+    filteredData = filteredData.filter(
+      (item) => item.userId.toLowerCase().includes(userId) 
     );
   }
 
-  if (status !== 'all') {
+  // Apply status filter
+  if (status && status !== 'all') {
     filteredData = filteredData.filter((item) => item.status === status);
   }
+
   return filteredData;
 }

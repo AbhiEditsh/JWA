@@ -1,4 +1,11 @@
+import { useState } from 'react';
 import PropTypes from 'prop-types';
+import axios from 'axios';
+import { useRouter } from 'src/routes/hooks';
+import { useSnackbar } from 'src/components/snackbar';
+import { useBoolean } from 'src/hooks/use-boolean';
+import { useGetProducts } from 'src/api/product';
+
 import {
   Button,
   MenuItem,
@@ -13,18 +20,23 @@ import {
   Stack,
   Chip,
 } from '@mui/material';
-import axios from 'axios';
-import { useBoolean } from 'src/hooks/use-boolean';
-import { useSnackbar } from 'src/components/snackbar';
+
 import Iconify from 'src/components/iconify';
 import { ConfirmDialog } from 'src/components/custom-dialog';
 import CustomPopover, { usePopover } from 'src/components/custom-popover';
-import { useRouter } from 'src/routes/hooks';
-import { useGetProducts } from 'src/api/product';
-import { useState } from 'react';
 
 export default function OrderTableRow({ row, index, selected, onSelectRow, onEditRow }) {
-  const { userId, paymentMethod, paymentStatus, amount, status, _id, items = [] } = row;
+  const {
+    userId,
+    paymentMethod,
+    paymentStatus,
+    totalQuantity,
+    amount,
+    status,
+    _id,
+    items = [],
+  } = row;
+
   const [open, setOpen] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
   const confirm = useBoolean();
@@ -32,6 +44,7 @@ export default function OrderTableRow({ row, index, selected, onSelectRow, onEdi
   const router = useRouter();
   const { mutate } = useGetProducts();
 
+  // Handle Row Deletion
   const handleDeleteRow = async (id) => {
     try {
       const response = await axios.delete(
@@ -42,24 +55,25 @@ export default function OrderTableRow({ row, index, selected, onSelectRow, onEdi
     } catch (error) {
       const errorMessage = error?.response?.data?.message || 'Failed to delete product';
       enqueueSnackbar(errorMessage, { variant: 'error' });
-      console.error('Error Details:', errorMessage);
+      console.error('Error:', errorMessage);
     }
   };
 
+  // Status Color Mapping
   const getStatusColor = (status) => {
     switch (status) {
       case 'Pending':
-        return 'warning'; // Yellow
+        return 'warning';
       case 'Processing':
-        return 'info'; // Blue
+        return 'info';
       case 'Shipped':
-        return 'primary'; // Dark Blue
+        return 'primary';
       case 'Delivered':
-        return 'success'; // Green
+        return 'success';
       case 'Cancelled':
-        return 'error'; // Red
+        return 'error';
       default:
-        return 'default'; // Gray
+        return 'default';
     }
   };
 
@@ -72,20 +86,37 @@ export default function OrderTableRow({ row, index, selected, onSelectRow, onEdi
         </TableCell>
 
         <TableCell align="center">{index + 1}</TableCell>
-        <TableCell align="center">{userId?.username || 'N/A'}</TableCell>
+
+        {/* User Details */}
+        <TableCell align="center">
+          <Box display="flex" flexDirection="column" alignItems="center" gap={1}>
+            <Avatar alt={userId?.username || 'User'} src={userId?.profilePicture || ''} />
+            <Typography variant="body2">{userId?.username || 'N/A'}</Typography>
+            <Typography variant="caption" color="text.secondary">
+              {userId?.email || 'N/A'}
+            </Typography>
+          </Box>
+        </TableCell>
+
+        {/* Expand/Collapse Button */}
         <TableCell align="center">
           <IconButton size="small" onClick={() => setOpen(!open)}>
             <Iconify icon={open ? 'mdi:chevron-up' : 'mdi:chevron-down'} />
           </IconButton>
         </TableCell>
 
+        <TableCell align="center">{totalQuantity || 'N/A'}</TableCell>
         <TableCell align="center">{paymentMethod || 'N/A'}</TableCell>
         <TableCell align="center">{paymentStatus || 'N/A'}</TableCell>
+
+        {/* Status Chip */}
         <TableCell align="center">
-          <Chip label={status} color={getStatusColor(status)} variant="Filled" size='small'/>
+          <Chip label={status} color={getStatusColor(status)} variant="outlined" size="small" />
         </TableCell>
+
         <TableCell align="center">{amount || 'N/A'}</TableCell>
 
+        {/* Actions Menu */}
         <TableCell align="right">
           <IconButton color={popover.open ? 'inherit' : 'default'} onClick={popover.onOpen}>
             <Iconify icon="eva:more-vertical-fill" />
@@ -93,36 +124,34 @@ export default function OrderTableRow({ row, index, selected, onSelectRow, onEdi
         </TableCell>
       </TableRow>
 
-      {/* Expandable Details Row */}
+      {/* Expandable Order Items Row */}
       <TableRow>
-        <TableCell colSpan={8} sx={{ p: 0, borderBottom: open ? '1px solid #ddd' : 'none' }}>
+        <TableCell colSpan={9} sx={{ p: 0, borderBottom: open ? '1px solid #ddd' : 'none' }}>
           <Collapse in={open} timeout="auto" unmountOnExit>
             <Box sx={{ p: 2 }}>
               {items.length > 0 ? (
-                <Box sx={{ mt: 2 }}>
-                  {items.map((item, idx) => (
-                    <Stack
-                      key={idx}
-                      direction="row"
-                      alignItems="center"
-                      spacing={2}
-                      sx={{ mt: 1, p: 1, border: '1px solid #ddd', borderRadius: 1 }}
-                    >
-                      <Avatar
-                        alt={item?.productId?.name || 'No Image'}
-                        src={item?.productId?.ProductImage || ''}
-                        sx={{ width: 40, height: 40 }}
-                      />
-                      <Typography variant="body2">{item?.productId?.name || 'No Name'}</Typography>
-                      <Typography variant="body2">
-                        Quantity : {item?.quantity || 'No quantity'}
-                      </Typography>
-                      <Typography variant="body2" sx={{ ml: 'auto' }}>
-                        ₹{item?.productId?.price || '0'}
-                      </Typography>
-                    </Stack>
-                  ))}
-                </Box>
+                items.map((item, idx) => (
+                  <Stack
+                    key={idx}
+                    direction="row"
+                    alignItems="center"
+                    spacing={2}
+                    sx={{ mt: 1, p: 1, border: '1px solid #ddd', borderRadius: 1 }}
+                  >
+                    <Avatar
+                      alt={item?.productId?.name || 'No Image'}
+                      src={item?.productId?.ProductImage || ''}
+                      sx={{ width: 40, height: 40 }}
+                    />
+                    <Typography variant="body2">{item?.productId?.name || 'No Name'}</Typography>
+                    <Typography variant="body2">
+                      Quantity: {item?.quantity || 'No quantity'}
+                    </Typography>
+                    <Typography variant="body2" sx={{ ml: 'auto' }}>
+                      ₹{item?.productId?.price || '0'}
+                    </Typography>
+                  </Stack>
+                ))
               ) : (
                 <Typography variant="body2" sx={{ mt: 2, color: 'gray' }}>
                   No items available.
@@ -133,7 +162,7 @@ export default function OrderTableRow({ row, index, selected, onSelectRow, onEdi
         </TableCell>
       </TableRow>
 
-      {/* Actions Menu */}
+      {/* Actions Popover */}
       <CustomPopover
         open={popover.open}
         onClose={popover.onClose}
@@ -154,7 +183,7 @@ export default function OrderTableRow({ row, index, selected, onSelectRow, onEdi
         <MenuItem
           onClick={() => {
             onEditRow();
-            router.push(`/dashboard/product/${_id}/edit`);
+            router.push(`/dashboard/order/${_id}/edit`);
             popover.onClose();
           }}
         >
@@ -186,6 +215,7 @@ export default function OrderTableRow({ row, index, selected, onSelectRow, onEdi
   );
 }
 
+// Define PropTypes
 OrderTableRow.propTypes = {
   row: PropTypes.object.isRequired,
   index: PropTypes.number.isRequired,
