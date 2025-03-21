@@ -12,7 +12,6 @@ import { paths } from 'src/routes/paths';
 import { useRouter } from 'src/routes/hooks';
 
 import { _orders, ORDER_STATUS_OPTIONS } from 'src/_mock';
-import { isAfter, isBetween } from 'src/utils/format-time';
 
 import { useBoolean } from 'src/hooks/use-boolean';
 import Iconify from 'src/components/iconify';
@@ -32,25 +31,17 @@ import {
   TablePaginationCustom,
 } from 'src/components/table';
 import { useSnackbar } from 'src/components/snackbar';
-import { alpha } from '@mui/material/styles';
-
-import OrderTableRow from '../order-table-row';
-import OrderTableToolbar from '../order-table-toolbar';
+import PaymentTableRow from '../payment-table-row';
+import PaymentTableToolbar from '../payment-table-toolbar';
 import { useGetOrder } from 'src/api/order';
-import { Tab, Tabs } from '@mui/material';
-import Label from 'src/components/label';
-import OrderTableFiltersResult from '../order-table-filters-result';
-const STATUS_OPTIONS = [{ value: 'all', label: 'All' }, ...ORDER_STATUS_OPTIONS];
 
 const TABLE_HEAD = [
   { id: 'Sr no', label: 'Sr No', align: 'center' },
   { id: 'username', label: 'username', align: 'left' },
-  { id: 'createdAt', label: 'Date', width: 140 },
   { id: 'product', label: 'Product', align: 'center' },
   { id: 'item', label: 'Items', align: 'center' },
   { id: 'paymentMethod', label: 'Payment Method', align: 'center' },
   { id: 'paymentStatus', label: 'Payment Status', align: 'center' },
-  { id: 'status', label: 'Status', align: 'center' },
   { id: 'amount', label: 'Amount', align: 'center' },
   { id: 'Action', label: 'Action', width: 88 },
 ];
@@ -59,36 +50,31 @@ const defaultFilters = {
   status: 'all',
 };
 
-function OrderListView() {
+function PaymentListView() {
   const table = useTable();
   const { enqueueSnackbar } = useSnackbar();
   const settings = useSettingsContext();
   const router = useRouter();
   const confirm = useBoolean();
-  
-  
+
   const [filters, setFilters] = useState(defaultFilters);
   const { order, orderError, mutate } = useGetOrder();
-  
+
   useEffect(() => {
     if (orderError) {
       enqueueSnackbar('Failed to fetch Order', { variant: 'error' });
     }
   }, [orderError, enqueueSnackbar]);
-  
-  const dateError = isAfter(filters.startDate, filters.endDate);
+
   // Filter and sort the product data
   const dataFiltered = applyFilter({
     orderData: order || [],
     comparator: getComparator(table.order, table.orderBy),
     filters,
   });
-  
-  
 
   const denseHeight = table.dense ? 56 : 76;
   const canReset = !!filters.name || filters.status !== 'all';
-  
   const notFound = (!dataFiltered.length && canReset) || !dataFiltered.length;
 
   const handleFilters = useCallback(
@@ -101,10 +87,6 @@ function OrderListView() {
     },
     [table]
   );
-
-  const handleResetFilters = useCallback(() => {
-    setFilters(defaultFilters);
-  }, []);
 
   // Handle deletion for one or multiple rows
   const handleDeleteRows = useCallback(async () => {
@@ -146,17 +128,12 @@ function OrderListView() {
 
   const handleEditRow = useCallback(
     (id) => {
-      router.push(paths.dashboard.order.edit(id));
+      router.push(paths.dashboard.payment.edit(id));
     },
     [router]
   );
 
-  const handleFilterStatus = useCallback(
-    (event, newValue) => {
-      handleFilters('status', newValue);
-    },
-    [handleFilters]
-  );
+ 
 
   return (
     <>
@@ -165,72 +142,14 @@ function OrderListView() {
           heading="Order List"
           links={[
             { name: 'Dashboard', href: paths.dashboard.root },
-            { name: 'Order', href: paths.dashboard.order.list },
-            { name: 'Order List' },
+            { name: 'Payment', href: paths.dashboard.payment.list },
+            { name: 'Payment List' },
           ]}
           sx={{ mb: { xs: 3, md: 5 } }}
         />
 
         <Card>
-          <Tabs
-            value={filters.status}
-            onChange={handleFilterStatus}
-            sx={{
-              px: 2.5,
-              boxShadow: (theme) => `inset 0 -2px 0 0 ${alpha(theme.palette.grey[500], 0.08)}`,
-            }}
-          >
-            {STATUS_OPTIONS.map((tab) => {
-              const statusCounts = order?.reduce((acc, curr) => {
-                acc[curr.status] = (acc[curr.status] || 0) + 1;
-                return acc;
-              }, {});
-
-              const totalOrders = order?.length || 0;
-              const tabCount = tab.value === 'all' ? totalOrders : statusCounts[tab.value] || 0;
-
-              return (
-                <Tab
-                  key={tab.value}
-                  iconPosition="end"
-                  value={tab.value}
-                  label={tab.label}
-                  icon={
-                    <Label
-                      variant={
-                        ((tab.value === 'all' || tab.value === filters.status) && 'filled') ||
-                        'soft'
-                      }
-                      color={
-                        (tab.value === 'completed' && 'success') ||
-                        (tab.value === 'pending' && 'warning') ||
-                        (tab.value === 'cancelled' && 'error') ||
-                        'default'
-                      }
-                    >
-                      {tabCount}
-                    </Label>
-                  }
-                />
-              );
-            })}
-          </Tabs>
-
-          <OrderTableToolbar
-            filters={filters}
-            onFilters={handleFilters}
-            dateError={dateError}
-          />
-
-          {canReset && (
-            <OrderTableFiltersResult
-              filters={filters}
-              onFilters={handleFilters}
-              onResetFilters={handleResetFilters}
-              results={dataFiltered.length}
-              sx={{ p: 2.5, pt: 0 }}
-            />
-          )}
+          <PaymentTableToolbar filters={filters} onFilters={handleFilters} />
 
           <TableContainer sx={{ position: 'relative', overflow: 'unset' }}>
             <TableSelectedAction
@@ -276,7 +195,7 @@ function OrderListView() {
                       table.page * table.rowsPerPage + table.rowsPerPage
                     )
                     .map((row, index) => (
-                      <OrderTableRow
+                      <PaymentTableRow
                         key={row._id}
                         index={index}
                         row={row}
@@ -329,18 +248,16 @@ function OrderListView() {
   );
 }
 
-export default OrderListView;
+export default PaymentListView;
 
 // ----------------------------------------------------------------------
 // Helper function to filter and sort product data
 
-function applyFilter({ orderData, comparator, filters, dateError }) {
-  const { status, userId, startDate, endDate } = filters;
+function applyFilter({ orderData, comparator, filters }) {
+  const { status, userId } = filters;
+  console.log(userId);
 
-  const start = startDate ? new Date(startDate) : null;
-  const end = endDate ? new Date(endDate) : null;
-
-  // Sort data using the provided comparator
+  // Stabilize the sorting
   const stabilizedThis = orderData.map((el, index) => [el, index]);
   stabilizedThis.sort((a, b) => {
     const order = comparator(a[0], b[0]);
@@ -350,25 +267,14 @@ function applyFilter({ orderData, comparator, filters, dateError }) {
 
   let filteredData = stabilizedThis.map((el) => el[0]);
 
+  // Apply username filter
   if (userId) {
-    filteredData = filteredData.filter((item) => 
-      item.userId && 
-      item.userId.username && 
-      item.userId.username.toLowerCase().includes(userId.toLowerCase())
-    );    
+    filteredData = filteredData.filter((item) => item.userId.toLowerCase().includes(userId));
   }
 
-  // ✅ Filter by status
+  // Apply status filter
   if (status && status !== 'all') {
     filteredData = filteredData.filter((item) => item.status === status);
-  }
-
-  // ✅ Filter by date range if there's no date error
-  if (!dateError && start && end) {
-    filteredData = filteredData.filter((order) => {
-      const orderDate = new Date(order.createdAt);
-      return orderDate >= start && orderDate <= end;
-    });
   }
 
   return filteredData;

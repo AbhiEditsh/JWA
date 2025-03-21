@@ -17,6 +17,7 @@ import { useAuthContext } from 'src/auth/hooks';
 
 import { varHover } from 'src/components/animate';
 import CustomPopover, { usePopover } from 'src/components/custom-popover';
+import { paths } from 'src/routes/paths';
 
 // ----------------------------------------------------------------------
 
@@ -27,11 +28,7 @@ const OPTIONS = [
   },
   {
     label: 'Profile',
-    linkTo: '/#1',
-  },
-  {
-    label: 'Settings',
-    linkTo: '/#2',
+    linkTo: paths.dashboard.profile.root,
   },
 ];
 
@@ -41,6 +38,8 @@ export default function AccountPopover() {
   const router = useRouter();
 
   const { user } = useMockedUser();
+  
+  
 
   const { logout } = useAuthContext();
 
@@ -80,7 +79,7 @@ export default function AccountPopover() {
         }}
       >
         <Avatar
-          src={user?.photoURL}
+          src={user?.profilePicture}
           alt={user?.displayName}
           sx={{
             width: 36,

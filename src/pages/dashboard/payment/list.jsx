@@ -1,6 +1,6 @@
 import { Helmet } from 'react-helmet-async';
 
-import PaymentView from 'src/sections/Payment/view';
+import PaymentListView from 'src/sections/Payment/view/payment-list-view';
 
 // ----------------------------------------------------------------------
 
@@ -8,10 +8,10 @@ export default function Page() {
   return (
     <>
       <Helmet>
-        <title> Dashboard: Payment</title>
+        <title> Dashboard: Payment List</title>
       </Helmet>
 
-      <PaymentView />
+      <PaymentListView />
     </>
   );
 }

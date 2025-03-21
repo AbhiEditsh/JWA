@@ -34,6 +34,13 @@ export const paths = {
       list: `${ROOTS.DASHBOARD}/order/list`,
       edit: (id) => `${ROOTS.DASHBOARD}/order/${id}/edit`,
     },
-    payment: `${ROOTS.DASHBOARD}/payment`,
+    payment: {
+      root: `${ROOTS.DASHBOARD}/payment`,
+      list: `${ROOTS.DASHBOARD}/payment/list`,
+      edit: (id) => `${ROOTS.DASHBOARD}/payment/${id}/edit`,
+    },
+    profile:{
+      root: `${ROOTS.DASHBOARD}/profile`,
+    }
   },
 };

@@ -18,25 +18,19 @@ import {
   Checkbox,
   Avatar,
   Stack,
-  Chip,
-  ListItemText,
 } from '@mui/material';
-
-import { fDate, fTime } from 'src/utils/format-time';
 
 import Iconify from 'src/components/iconify';
 import { ConfirmDialog } from 'src/components/custom-dialog';
 import CustomPopover, { usePopover } from 'src/components/custom-popover';
 
-export default function OrderTableRow({ row, index, selected, onSelectRow, onEditRow }) {
+export default function PaymentListView({ row, index, selected, onSelectRow, onEditRow }) {
   const {
     userId,
     paymentMethod,
     paymentStatus,
     totalQuantity,
     amount,
-    status,
-    createdAt,
     _id,
     items = [],
   } = row;
@@ -63,23 +57,6 @@ export default function OrderTableRow({ row, index, selected, onSelectRow, onEdi
     }
   };
 
-  // Status Color Mapping
-  const getStatusColor = (status) => {
-    switch (status) {
-      case 'Pending':
-        return 'warning';
-      case 'Processing':
-        return 'info';
-      case 'Shipped':
-        return 'primary';
-      case 'Delivered':
-        return 'success';
-      case 'Cancelled':
-        return 'error';
-      default:
-        return 'default';
-    }
-  };
 
   return (
     <>
@@ -97,29 +74,13 @@ export default function OrderTableRow({ row, index, selected, onSelectRow, onEdi
             <Box>
               <Avatar alt={userId?.username || 'User'} src={userId?.profilePicture || ''} />
             </Box>
-
             <Box>
-              <Typography variant="body2" textAlign={'left'}>
-                {userId?.username || 'N/A'}
-              </Typography>
-              <Typography variant="caption" color="text.secondary" textAlign={'left'}>
+              <Typography variant="body2" textAlign={"left"}>{userId?.username || 'N/A'}</Typography>
+              <Typography variant="caption" color="text.secondary" textAlign={"left"}>
                 {userId?.email || 'N/A'}
               </Typography>
             </Box>
           </Box>
-        </TableCell>
-
-        <TableCell>
-          <ListItemText
-            primary={fDate(createdAt)}
-            secondary={fTime(createdAt)}
-            primaryTypographyProps={{ typography: 'body2', noWrap: true }}
-            secondaryTypographyProps={{
-              mt: 0.5,
-              component: 'span',
-              typography: 'caption',
-            }}
-          />
         </TableCell>
 
         {/* Expand/Collapse Button */}
@@ -132,14 +93,9 @@ export default function OrderTableRow({ row, index, selected, onSelectRow, onEdi
         <TableCell align="center">{totalQuantity || 'N/A'}</TableCell>
         <TableCell align="center">{paymentMethod || 'N/A'}</TableCell>
         <TableCell align="center">{paymentStatus || 'N/A'}</TableCell>
-
-        {/* Status Chip */}
-        <TableCell align="center">
-          <Chip label={status} color={getStatusColor(status)} variant="outlined" size="small" />
-        </TableCell>
-
         <TableCell align="center">{amount || 'N/A'}</TableCell>
 
+        {/* Actions Menu */}
         <TableCell align="right">
           <IconButton color={popover.open ? 'inherit' : 'default'} onClick={popover.onOpen}>
             <Iconify icon="eva:more-vertical-fill" />
@@ -147,6 +103,7 @@ export default function OrderTableRow({ row, index, selected, onSelectRow, onEdi
         </TableCell>
       </TableRow>
 
+      {/* Expandable Order Items Row */}
       <TableRow>
         <TableCell colSpan={9} sx={{ p: 0, borderBottom: open ? '1px solid #ddd' : 'none' }}>
           <Collapse in={open} timeout="auto" unmountOnExit>
@@ -205,12 +162,12 @@ export default function OrderTableRow({ row, index, selected, onSelectRow, onEdi
         <MenuItem
           onClick={() => {
             onEditRow();
-            router.push(`/dashboard/order/${_id}/edit`);
+            router.push(`/dashboard/payment/${_id}/edit`);
             popover.onClose();
           }}
         >
           <Iconify icon="solar:pen-bold" sx={{ mr: 1 }} />
-          View
+          view
         </MenuItem>
       </CustomPopover>
 
@@ -238,7 +195,7 @@ export default function OrderTableRow({ row, index, selected, onSelectRow, onEdi
 }
 
 // Define PropTypes
-OrderTableRow.propTypes = {
+PaymentListView.propTypes = {
   row: PropTypes.object.isRequired,
   index: PropTypes.number.isRequired,
   selected: PropTypes.bool.isRequired,

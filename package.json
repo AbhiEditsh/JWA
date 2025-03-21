@@ -20,6 +20,7 @@
   },
   "dependencies": {
     "@auth0/auth0-react": "^2.2.3",
+    "@date-io/dayjs": "^3.2.0",
     "@emotion/cache": "^11.11.0",
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
@@ -37,7 +38,7 @@
     "@mui/material": "^5.14.20",
     "@mui/system": "^5.14.20",
     "@mui/x-data-grid": "^6.20.4",
-    "@mui/x-date-pickers": "^6.20.2",
+    "@mui/x-date-pickers": "^7.28.0",
     "@react-pdf/renderer": "^3.1.14",
     "@supabase/supabase-js": "^2.39.0",
     "apexcharts": "^3.44.2",

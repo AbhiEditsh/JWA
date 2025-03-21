@@ -64,7 +64,7 @@ export function useNavData() {
           {
             title: t('Category'),
             path: paths.dashboard.category.root,
-            icon: ICONS.category,
+            icon: ICONS.menuItem,
             children: [
               { title: t('list'), path: paths.dashboard.category.list },
               { title: t('create'), path: paths.dashboard.category.new },
@@ -78,8 +78,9 @@ export function useNavData() {
           },
           {
             title: t('Payment'),
-            path: paths.dashboard.payment,
+            path: paths.dashboard.payment.root,
             icon: ICONS.banking,
+            children: [{ title: t('list'), path: paths.dashboard.payment.list }],
           },
         ],
       },

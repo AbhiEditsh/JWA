@@ -15,9 +15,7 @@ import { shortDateLabel } from 'src/components/custom-date-range-picker';
 export default function OrderTableFiltersResult({
   filters,
   onFilters,
-  //
   onResetFilters,
-  //
   results,
   ...other
 }) {

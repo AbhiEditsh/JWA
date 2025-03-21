@@ -10,6 +10,14 @@ export const ORDER_STATUS_OPTIONS = [
   { value: 'Cancelled', label: 'Cancelled' },
 ];
 
+
+export const PAYMENT_STATUS_OPTIONS = [
+  { value: 'Pending', label: 'Pending' },
+  { value: 'Paid', label: 'Paid' },
+  { value: 'Failed', label: 'Failed' },
+];
+
+
 const ITEMS = [...Array(3)].map((_, index) => ({
   id: _mock.id(index),
   sku: `16H9UR${index}`,
